@@ -107,7 +107,7 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 	
 	@Override
 	@Transactional(readOnly = true)
-	public T findEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException{
+	public T findEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException {
 			return dao.loadEntityByFilters(filters);
 	}
 	

@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.curcico</groupId>
 	<artifactId>jproject-core</artifactId>
-	<version>01.00.00-SNAPSHOT</version>
+	<version>01.00.01-SNAPSHOT</version>
 	<name>jproject-core</name>
 	<description>Funcionalidades genéricas para extender en aplicaciones java</description>
 	<packaging>jar</packaging>
