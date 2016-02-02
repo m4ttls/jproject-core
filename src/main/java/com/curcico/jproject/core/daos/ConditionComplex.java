@@ -69,4 +69,21 @@ public class ConditionComplex extends ConditionEntry {
 		return operator;
 	}
 	
+	@Override
+	public String resolveNativeQuery(Map<String, Object> parameters) {
+		Boolean first = true;
+		String condicion = "(";
+		if(operator==Operator.OR){
+			for (ConditionEntry conditionEntry : conditions) {
+				condicion += (first?"":" OR ") + conditionEntry.resolveNativeQuery(parameters);
+				first = false;
+			}
+		} else {
+			for (ConditionEntry conditionEntry : conditions) {
+				condicion += (first?"":" AND ") + conditionEntry.resolveNativeQuery(parameters);
+				first = false;
+			}
+		}
+		return condicion + ")";		
+	}
 }

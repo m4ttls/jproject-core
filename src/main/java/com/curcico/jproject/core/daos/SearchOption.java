@@ -1,6 +1,5 @@
 package com.curcico.jproject.core.daos;
 
-
 public enum SearchOption {
 	
 	EQUAL("eq"), 
@@ -74,5 +73,10 @@ public enum SearchOption {
 			return false;
 		}
 		return true;
+	}
+	
+	public static boolean isRequiredArrayValue(SearchOption searchOp) {
+		return (searchOp.equals(IN) || searchOp.equals(NOT_IN));
+		
 	}
 }

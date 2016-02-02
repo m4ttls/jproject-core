@@ -3,6 +3,7 @@ package com.curcico.jproject.core.daos;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +12,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+
 
 
 public class ConditionSimple extends ConditionEntry {
@@ -200,7 +202,13 @@ public class ConditionSimple extends ConditionEntry {
 				break;
 			case GREATER_EQUAL:
 				criterion =(Restrictions.ge(field, value));
-				break;	
+				break;
+//			case REGEX:
+//				criterion =(Restrictions.sqlRestriction(" regexp_like({alias}." + field + ", '" + value + "' , 'i') "));
+//				break;
+//			case ACTIVE:
+//				criterion =(Restrictions.sqlRestriction(" ({alias}.vigencia_desde <= sysdate and ({alias}.vigencia_hasta is null or {alias}.vigencia_hasta >= sysdate)) "));
+//				break;
 			default:
 				break;
 			}
@@ -208,5 +216,87 @@ public class ConditionSimple extends ConditionEntry {
 			return criterion;
 		return null;
 	}
+
 	
+	@Override
+	public String resolveNativeQuery(Map<String, Object> parameters) {
+		if(parameters==null) parameters = new HashMap<String, Object>();
+		String restriction = null;
+		Object auxiliarValue = this.value ;
+		String parameterName = "prm_" + this.column + "_" + (parameters.size() + 1);
+		switch (this.getCondition()) {
+			case EQUAL:
+				restriction = this.getColumn() + "=:" + parameterName ;
+				break;
+			case NOT_EQUAL:
+				restriction = this.getColumn() + "<>:" + parameterName ;
+				break;
+			case BEGIN:
+				restriction = this.getColumn() + " like :" + parameterName ;
+				auxiliarValue = this.value + "%";
+				break;
+			case NOT_BEGIN:
+				restriction = "NOT " + this.getColumn() + " like :" + parameterName ;
+				auxiliarValue = this.value + "%";
+				break;
+			case END:
+				restriction = this.getColumn() + " like :" + parameterName ;
+				auxiliarValue = "%" + this.value;
+				break;
+			case NOT_END:
+				restriction = "NOT " + this.getColumn() + " like :" + parameterName ;
+				auxiliarValue = "%" + this.value;
+				break;
+			case CONTAIN:
+				restriction = this.getColumn() + " like :" + parameterName ;
+				auxiliarValue = "%" + this.value + "%";
+				break;
+			case NOT_CONTAIN:
+				restriction = "NOT " + this.getColumn() + " like :" + parameterName ;
+				auxiliarValue = "%" + this.value + "%";
+				break;
+			case NULL:
+				restriction = this.getColumn() + " is null";
+				break;
+			case NOT_NULL:
+				restriction = this.getColumn() + " is not null";
+				break;
+			case IN:
+				restriction = this.getColumn() + " IN (:" + parameterName + ")" ;
+				break;
+			case NOT_IN:
+				restriction = this.getColumn() + " NOT IN (:" + parameterName + ")" ;
+				break;
+			case LESS:
+				restriction = this.getColumn() + "<:" + parameterName ;
+				break;
+			case LESS_EQUAL:
+				restriction = this.getColumn() + "<=:" + parameterName ;
+				break;
+			case GREATER:
+				restriction = this.getColumn() + ">:" + parameterName ;
+				break;
+			case GREATER_EQUAL:
+				restriction = this.getColumn() + ">=:" + parameterName ;
+				break;	
+//			case REGEX:
+//				// funciona para string, numeros, fechas y booleanos
+//				restriction = "REGEXP_LIKE(" + this.getColumn() + ", :" + parameterName + ")" ;
+//				break;
+//			case ACTIVE:
+//				restriction = "(vigencia_desde <= sysdate and (vigencia_hasta is null or vigencia_hasta >= sysdate))";
+//				break;
+			default:
+				break;
+		}
+		if(restriction!=null 
+				&& !(condition.equals(SearchOption.NULL) 
+						|| condition.equals(SearchOption.NOT_NULL)
+				//		|| condition.equals(SearchOption.ACTIVE)
+					)
+			) 
+			parameters.put(parameterName, auxiliarValue);
+	return restriction;
+	}
+
 }
