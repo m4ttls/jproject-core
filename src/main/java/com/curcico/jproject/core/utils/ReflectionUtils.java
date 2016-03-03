@@ -4,16 +4,21 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 
 import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.exception.BaseException;
@@ -82,6 +87,11 @@ public class ReflectionUtils {
 		}
 	}
 	
+	/** Retorna el tipo de dato correspondiente al campo de la clase pasados como parámetros
+	 * @param clase
+	 * @param field
+	 * @return
+	 */
 	public static Class<?> getCast(Class<?> clase, String field){
 		
 		logger.debug("Llamado: " + clase.getCanonicalName() + " - " + field);
@@ -94,12 +104,22 @@ public class ReflectionUtils {
 		}
 		List<Field> fields = new ArrayList<Field>();
 		for (Field f : getAllFields(fields, clase)){
-			logger.debug("Analizo campo: " + f.getName());
 			if(f.getName().equals(atributo)){
 				Class<?> nuevaClase = f.getType();
-				if(BaseEntity.class.isAssignableFrom(nuevaClase)){
-					return getCast(nuevaClase, rutaRestante);
+				logger.debug("Analizo campo: " + f.getName() + " - " + nuevaClase.getName());
+				
+				if(rutaRestante != null) {
+					if(ReflectionUtils.isCollectionField(atributo, clase)) {
+						return getCast(ReflectionUtils.getParameterizedTypeCollection(f), rutaRestante);
+					} else {
+						if(BaseEntity.class.isAssignableFrom(nuevaClase))
+							return getCast(nuevaClase, rutaRestante);
+						else 
+							return nuevaClase;
+					}
 				} else {
+					if(ReflectionUtils.isCollectionField(atributo, clase))
+						nuevaClase = ReflectionUtils.getParameterizedTypeCollection(f);
 					logger.debug("Respuesta: " + nuevaClase.getCanonicalName());
 					return nuevaClase;
 				}
@@ -229,4 +249,50 @@ public class ReflectionUtils {
 			throw new ReflectionException(e);
 		}
 	}
+	
+	/** Verifica si el campo corresponde a una colección
+	 * @param aliasName
+	 * @param typeParameterClass
+	 * @return
+	 */
+	public static boolean isCollectionField(String aliasName, Class<?> typeParameterClass) {
+		
+		String methodName = "get" + StringUtils.capitalize(aliasName);
+		Method[] methods  = typeParameterClass.getMethods();
+		for (int i = 0; i < methods.length; i++) {
+			if(methods[i].getName().equals(methodName)){
+				return Collection.class.isAssignableFrom(methods[i].getReturnType());
+			}
+		}
+		return false;
+	}	
+
+	/**
+	 * Obtiene el tipo con el que se instancia la coleccion 
+	 * @param f
+	 * @return
+	 */
+	public static Class<?> getParameterizedTypeCollection(Field f) {
+		ParameterizedType stringListType = (ParameterizedType) f.getGenericType();
+	    Class<?> stringListClass = (Class<?>) stringListType.getActualTypeArguments()[0];
+	    return stringListClass;
+	}
+	
+	/** Retorna un mapa con la definición de la clase de la forma (atributo, tipo de dato) 
+	 * @param clase
+	 * @return
+	 */
+	public static Map<String, String> getDefinition(
+			Class<?> clase) {
+		Map<String, String> definicion = new HashMap<String, String>();
+		if(clase!=null){
+			List<Field> fields = new ArrayList<Field>();
+			for (Field f : getAllFields(fields, clase)){
+				logger.info(f.getName() + " " + f.getType().getCanonicalName());
+				definicion.put(f.getName(), f.getType().getCanonicalName());
+			}
+		}
+		return definicion;
+	}	
+
 }
