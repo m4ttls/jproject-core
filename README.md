@@ -15,3 +15,7 @@ Utiliza:
  - Spring 4.0.5.RELEASE
  - Hibernate 4.3.5.Final
  - Maven
+ 
+ 
+ 
+ [![](https://jitpack.io/v/acurci/jproject-core.svg)](https://jitpack.io/#acurci/jproject-core)
