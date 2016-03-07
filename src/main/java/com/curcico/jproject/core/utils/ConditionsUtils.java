@@ -29,10 +29,10 @@ import com.google.gson.JsonParser;
 
 public class ConditionsUtils {
 
-	public static List<ConditionSimple> transformFilters(Class<?> clase,
+	public static List<ConditionEntry> transformFilters(Class<?> clase,
 			String filters) throws BaseException {
 		try {
-			List<ConditionSimple> parametersFilters = new ArrayList<ConditionSimple>();
+			List<ConditionEntry> parametersFilters = new ArrayList<ConditionEntry>();
 			if (filters != null && !filters.equals("")) {
 				boolean filter = true;
 				JSONParser jsonParser = new JSONParser();

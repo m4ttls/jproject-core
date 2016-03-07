@@ -22,7 +22,7 @@ public abstract class BaseEntity {
 		this.id = id;
 	}
 	
-	@Column(name="deleted", nullable=true, length=1)
+	@Column(name="DELETED", nullable=true, length=1)
 	public String getDeleted() {
 		return deleted;
 	}
@@ -35,7 +35,7 @@ public abstract class BaseEntity {
 	 * @return the version
 	 */
 	@Version
-	@Column(name="version")
+	@Column(name="VERSION")
 	public Integer getVersion() {
 		return version;
 	}
