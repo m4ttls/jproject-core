@@ -18,4 +18,4 @@ Utiliza:
  
  
  
- [![](https://jitpack.io/v/acurci/jproject-core.svg)](https://jitpack.io/#acurci/jproject-core)
+[![](https://jitpack.io/v/acurci/jproject-core.svg)](https://jitpack.io/#acurci/jproject-core)
