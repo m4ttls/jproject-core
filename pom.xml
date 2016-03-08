@@ -9,6 +9,12 @@
 	<description>Funcionalidades genéricas para extender en aplicaciones java</description>
 	<packaging>jar</packaging>
 
+	<organization>
+		<name>Curci Co.</name>
+	</organization>
+	
+	<url>http://acurci.github.io/jproject-core/</url>
+
 	<issueManagement>
 		<url>https://github.com/acurci/jproject-core/issues</url>
 		<system>GitHub Issues</system>
@@ -37,7 +43,6 @@
 		</developer>
 	</developers>
 
-
 	<properties>
 		<spring.version>4.0.5.RELEASE</spring.version>
 		<spring.security.version>3.2.4.RELEASE</spring.security.version>
@@ -56,11 +61,6 @@
 			<id>google-releases</id>
 			<name>Google Releases</name>
 			<url>https://oss.sonatype.org/content/repositories/google-releases</url>
-		</repository>
-		<repository>
-			<id>artifacts.alfresco.com</id>
-			<name>Alfresco Maven Repository</name>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>repository.apache.org</id>
@@ -311,9 +311,4 @@
 	</dependencies>
 
 
-	
-	<url>http://acurci.github.io/jproject-core/</url>
-	<organization>
-		<name>Curci Co.</name>
-	</organization>
 </project>
