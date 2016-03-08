@@ -180,6 +180,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	@Override
 	public void save(T object) throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().save(object);
+		object.setVersion(object.getVersion()+1);
 	}
 
 	/* (non-Javadoc)
@@ -188,6 +189,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	@Override
 	public void delete(T object)  throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().delete(object);
+		object.setVersion(object.getVersion()+1);
 	}
 
 	/* (non-Javadoc)
@@ -195,6 +197,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	 */
 	public void update(T object)  throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().merge(object);
+		object.setVersion(object.getVersion()+1);
 	}
 
 	/* (non-Javadoc)
@@ -204,6 +207,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	public void saveOrUpdate(T object) throws InternalErrorException {
 		try {
 			this.sessionFactory.getCurrentSession().saveOrUpdate(object);
+			object.setVersion(object.getVersion()+1);
 		} catch (Exception e) {
 			throw new InternalErrorException(e);
 		}
