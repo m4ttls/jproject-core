@@ -26,10 +26,10 @@ public abstract class TimeRangeEntityDaoImpl<T extends TimeRangeEntity>
 		List<ConditionEntry> respuesta = new ArrayList<ConditionEntry>();
 		if(filters!=null) respuesta.addAll(filters);
 		Date now = new Date();
-		respuesta.add(new ConditionSimple("vigenciaDesde", SearchOption.NOT_NULL));		
+		respuesta.add(new ConditionSimple("vigenciaDesde", SearchOption.NOT_NULL, null));
 		respuesta.add(new ConditionSimple("vigenciaDesde", SearchOption.LESS_EQUAL, now));		
 		ConditionComplex cc = new ConditionComplex(Operator.OR);
-		cc.addCondition(new ConditionSimple("vigenciaHasta", SearchOption.NULL));
+		cc.addCondition(new ConditionSimple("vigenciaHasta", SearchOption.NULL, null));
 		cc.addCondition(new ConditionSimple("vigenciaHasta", SearchOption.GREATER_EQUAL, now));
 		respuesta.add(cc);
 		return respuesta;

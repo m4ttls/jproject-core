@@ -152,7 +152,10 @@ public class ConditionSimple extends ConditionEntry {
 					Criterion fechaLe = Restrictions.le(field, value2) ;
 					criterion = Restrictions.and(fechaGe, fechaLe);//que sea mayor igual que GE y menor igual que LE
 				} else {
-					criterion =(Restrictions.eq(field, value));
+					if(value==null)
+						criterion =(Restrictions.isNull(field));
+					else
+						criterion =(Restrictions.eq(field, value));
 				}
 				break;
 			}
