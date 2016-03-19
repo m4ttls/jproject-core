@@ -5,8 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-/**
- * Clase que abarca los métodos 
+/** Clase que abarca los métodos 
  * comunes para realizar las consultas
  * 
  * @author dumar
@@ -14,8 +13,7 @@ import org.hibernate.Criteria;
  */
 public abstract class Condition {
 
-	/**
-	 * Permite actualizar el objeto alias, agregandole sólo
+	/** Permite actualizar el objeto alias, agregandole sólo
 	 * los alias que se crearon automaticamente y que no
 	 * fueron definidos por el dao
 	 * 
@@ -36,8 +34,7 @@ public abstract class Condition {
 		}
 	}
 
-	/**
-	 * Se agregan al criteria los alias nuevos, además
+	/** Se agregan al criteria los alias nuevos, además
 	 * se agregan las traducciones de los mismos.
 	 * Al final todos los alias se agregan al objeto alias
 	 * 
@@ -63,8 +60,7 @@ public abstract class Condition {
 		alias.addAll(aliasByColumn);
 	}
 	
-	/**
-	 * Se obtienen los alias automaticamente a partir de las
+	/** Se obtienen los alias automaticamente a partir de las
 	 * condiciones del query
 	 * 
 	 * @param columnCondition
@@ -98,6 +94,11 @@ public abstract class Condition {
 		return alias;
 	}
 	
+	/** Permite obtener los alias creados para la ruta de un atributo utilizado en los fetchs o filtros
+	 * @param array
+	 * @param index
+	 * @return
+	 */
 	protected static String getAliasName(String[] array, int index){
 		String result = "";
 		for (int i = 0; i < index+1; i++) {

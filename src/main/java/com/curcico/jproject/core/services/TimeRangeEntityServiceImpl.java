@@ -1,5 +1,6 @@
 package com.curcico.jproject.core.services;
 
+import java.util.Date;
 import java.util.List;
 
 import com.curcico.jproject.core.daos.ConditionEntry;
@@ -11,8 +12,14 @@ public abstract class TimeRangeEntityServiceImpl<T extends TimeRangeEntity, U ex
 		extends CommonsService<T, U> 
 		implements TimeRangeEntityService<T> {
 	
+	@Override
 	public List<ConditionEntry> addFiltersActive(List<ConditionEntry> filters) throws BaseException{
 		return this.getDao().addFiltersActive(filters);
 	}
 
+	@Override
+	public List<ConditionEntry> addFiltersActiveAtDate(Date date,
+			List<ConditionEntry> filters) throws BaseException {
+		return this.getDao().addFiltersActiveAtDate(date, filters);
+	}
 }

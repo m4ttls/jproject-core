@@ -23,16 +23,23 @@ public abstract class TimeRangeEntityDaoImpl<T extends TimeRangeEntity>
 	@Override
 	public List<ConditionEntry> addFiltersActive(List<ConditionEntry> filters)
 			throws BaseException {
+		Date now = new Date();
+		return addFiltersActiveAtDate(now, filters);
+	}
+	
+	@Override
+	public List<ConditionEntry> addFiltersActiveAtDate(Date date, List<ConditionEntry> filters)
+			throws BaseException {
 		List<ConditionEntry> respuesta = new ArrayList<ConditionEntry>();
 		if(filters!=null) respuesta.addAll(filters);
-		Date now = new Date();
 		respuesta.add(new ConditionSimple("vigenciaDesde", SearchOption.NOT_NULL, null));
-		respuesta.add(new ConditionSimple("vigenciaDesde", SearchOption.LESS_EQUAL, now));		
+		respuesta.add(new ConditionSimple("vigenciaDesde", SearchOption.LESS_EQUAL, date));		
 		ConditionComplex cc = new ConditionComplex(Operator.OR);
 		cc.addCondition(new ConditionSimple("vigenciaHasta", SearchOption.NULL, null));
-		cc.addCondition(new ConditionSimple("vigenciaHasta", SearchOption.GREATER_EQUAL, now));
+		cc.addCondition(new ConditionSimple("vigenciaHasta", SearchOption.GREATER_EQUAL, date));
 		respuesta.add(cc);
 		return respuesta;
 	}
+	
 
 }

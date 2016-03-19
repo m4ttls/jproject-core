@@ -19,6 +19,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+/** Clase abstracta que enmarca las condiciones (simples o complejas)
+ * @author alejandro
+ *
+ */
 public abstract class ConditionEntry extends Condition {
 
 	enum FilterType
@@ -26,11 +30,25 @@ public abstract class ConditionEntry extends Condition {
 	  SIMPLE, ARRAY, GROUP, EMPTY, INVALID 
 	}
 	
+	/**
+	 * @param criteria
+	 * @param alias
+	 * @param translations
+	 * @return
+	 */
 	public abstract Criterion resolve(Criteria criteria, Set<ManagerAlias> alias,
 			Map<String, String> translations);
 	
+	/**
+	 * @param parameters
+	 * @return
+	 */
 	public abstract String resolveNativeQuery(Map<String, Object> parameters);
 
+	/**
+	 * @param path
+	 * @return
+	 */
 	public static String getFieldWithAlias(String path) {
 		if(path.contains(".")){
 			String fields[] = path.split("\\.");
@@ -97,6 +115,11 @@ public abstract class ConditionEntry extends Condition {
 		return conditions;
 	}
 	
+	/**
+	 * @param filters
+	 * @return
+	 * @throws Exception
+	 */
 	public static FilterType getFilterType (String filters) throws Exception {
 
 		if(filters != null && !filters.equals("")){
@@ -119,6 +142,12 @@ public abstract class ConditionEntry extends Condition {
 	}
 	
 	
+	/**
+	 * @param clase
+	 * @param jsonObject
+	 * @return
+	 * @throws Exception
+	 */
 	public static ConditionSimple conditionSimpleParser(Class<?> clase, JsonObject jsonObject) throws Exception{
 		String field 	= jsonObject.get("field")==null?null:jsonObject.get("field").getAsString();
 		String op 		= jsonObject.get("op")   ==null?null:jsonObject.get("op").getAsString();
@@ -153,6 +182,13 @@ public abstract class ConditionEntry extends Condition {
 		return new ConditionSimple(field, searchOp, value);	
 	} 
 	
+	/** Parsea una condición json y la convierte en una condition simple para consultas sobre una entidad
+	 * @param clase Clase de la entidad sobre la que se consulta
+	 * @param field Atributo de la condición (puede pertenecer a una composición)
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
 	public static List<Object> transformJsonToList(Class<?> clase, String field, String data) 
 			throws Exception {
 		List<Object> lista = new ArrayList<Object>();
@@ -168,6 +204,12 @@ public abstract class ConditionEntry extends Condition {
 		return lista;
 	}
 	
+	/** Dado dos string correspondiente a condiciones los une en un json válido
+	 * @param filters01
+	 * @param filters02
+	 * @return
+	 * @throws Exception
+	 */
 	public static String acumulateFilters(String filters01, String filters02) throws Exception {
 		JsonObject o 	 = new JsonObject();
 		JsonArray rules  = new JsonArray();
@@ -205,6 +247,11 @@ public abstract class ConditionEntry extends Condition {
 	    
 	}
 	
+	/** Transforma un json con los filtros en un listado de ConditionsEntry para querys NATIVAS
+	 * @param filters Json de condiciones
+	 * @return List<ConditionEntry>
+	 * @throws Exception
+	 */
 	public static List<ConditionEntry> transformNativeFilters(String filters) 
 			throws Exception {
 		
@@ -246,6 +293,11 @@ public abstract class ConditionEntry extends Condition {
 		return conditions;
 	}
 	
+	/** Parsea una condición json y la convierte en una condition simple para querys NATIVAS
+	 * @param jsonObject
+	 * @return condition simple
+	 * @throws Exception
+	 */
 	public static ConditionSimple conditionSimpleNativeParser(JsonObject jsonObject) throws Exception{
 		String field 	= jsonObject.get("field")==null?null:jsonObject.get("field").getAsString();
 		String op 		= jsonObject.get("op")   ==null?null:jsonObject.get("op").getAsString();
@@ -254,6 +306,10 @@ public abstract class ConditionEntry extends Condition {
 		return new ConditionSimple(field, searchOp, data);
 	}
 	
+	/** Testea si el string corresponde a los formatos YYYY-MM-DD, DD/MM/YYYY, o UTC
+	 * @param value String a comprobar
+	 * @return Retorna verdadeo si el string corresponde a un formato de fecha.
+	 */
 	public static boolean isDate(String value){
 		 Pattern p_utc = Pattern.compile("(20|19)\\d\\d-(0[1-9]|1[012])-([012][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])Z");
 		 Pattern p_standard = Pattern.compile("(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)");	 

@@ -11,6 +11,10 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 
+/** Ofrece la posibilidad de agrupar ConditiosEntry bajo un agrupador AND u OR
+ * @author alejandro
+ *
+ */
 public class ConditionComplex extends ConditionEntry {
 
 	public enum Operator {
@@ -21,12 +25,19 @@ public class ConditionComplex extends ConditionEntry {
 
 	private List<ConditionEntry> conditions;
 
+	/** Constructor de una condición compleja
+	 * @param operator AND u OR
+	 */
 	public ConditionComplex(Operator operator) {
 		super();
 		this.operator = operator;
 		this.conditions = new ArrayList<ConditionEntry>();
 	}
 	
+	/** Contructor
+	 * @param operator AND u OR
+	 * @param conditions Lista de conditionsEntry para agrupar
+	 */
 	public ConditionComplex(Operator operator, List<ConditionEntry> conditions) {
 		super();
 		this.operator = operator;
@@ -36,15 +47,24 @@ public class ConditionComplex extends ConditionEntry {
 			this.conditions = new ArrayList<ConditionEntry>();			
 	}
 
+	/** Agrega una condición a la lista
+	 * @param condition
+	 */
 	public void addCondition(ConditionEntry condition){
 		this.conditions.add(condition);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "ConditionComplex [operator=" + operator + ", conditions.size=" + conditions.size() + "]";
 	}
 
+	/* (non-Javadoc)
+	 * @see com.curcico.jproject.core.daos.ConditionEntry#resolve(org.hibernate.Criteria, java.util.Set, java.util.Map)
+	 */
 	public Criterion resolve(Criteria criteria, Set<ManagerAlias> alias, Map<String, String> translations) {
 		if(operator==Operator.OR){
 			Disjunction cr = Restrictions.disjunction();
@@ -61,14 +81,23 @@ public class ConditionComplex extends ConditionEntry {
 		}
 	}
 
+	/**
+	 * @return retorna la lista de condiciones
+	 */
 	public List<ConditionEntry> getConditions() {
 		return conditions;
 	}
 
+	/** 
+	 * @return retorna el operador (AND u OR) que agrupa las condiciones
+	 */
 	public Operator getOperator() {
 		return operator;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.curcico.jproject.core.daos.ConditionEntry#resolveNativeQuery(java.util.Map)
+	 */
 	@Override
 	public String resolveNativeQuery(Map<String, Object> parameters) {
 		Boolean first = true;
