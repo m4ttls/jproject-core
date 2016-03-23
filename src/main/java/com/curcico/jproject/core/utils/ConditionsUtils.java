@@ -192,7 +192,7 @@ public class ConditionsUtils {
 		return result;
 	}
 
-	public static void addConditionSimple(List<ConditionSimple> filters, Class<?> class1,
+	public static void addConditionSimple(List<ConditionEntry> filters, Class<?> class1,
 			String searchField, String searchOper, String searchString) throws Exception {
 		if(filters != null && !filters.isEmpty() && 
 				class1 != null && searchField != null && !searchField.isEmpty() &&

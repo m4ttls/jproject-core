@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -140,24 +141,24 @@ public class ReflectionUtils {
 	}
 	
 	public static Object castField(Class<?> clase, String fieldName, String field, SimpleDateFormat formatter) throws ReflectionException{
-		Class<?> fiedType = getCast(clase, fieldName);
+		Class<?> fieldType = getCast(clase, fieldName);
 		
 		try {
-			if(fiedType == String.class){
+			if(fieldType == String.class){
 				return field;
-			}else if(fiedType == Integer.class){
+			}else if(fieldType == Integer.class){
 				return Integer.parseInt(field);
-			}else if(fiedType == Long.class){
+			}else if(fieldType == Long.class){
 				return Long.parseLong(field);
-			}else if(fiedType == Float.class){
+			}else if(fieldType == Float.class){
 				return Float.parseFloat(field);
-			}else if(fiedType == Double.class){
+			}else if(fieldType == Double.class){
 				return Double.parseDouble(field);
-			}else if(fiedType == BigDecimal.class){
+			}else if(fieldType == BigDecimal.class){
 				return new BigDecimal(field);
-			}else if(fiedType == Boolean.class){
+			}else if(fieldType == Boolean.class){
 				return Boolean.parseBoolean(field);
-			}else if(fiedType == java.util.Date.class || fiedType == java.sql.Date.class || fiedType == Timestamp.class ){
+			}else if(fieldType == java.util.Date.class || fieldType == java.sql.Date.class || fieldType == Timestamp.class ){
 				if(formatter == null){
 					String pattern = "([0-9]){2}-([0-9]){2}-([0-9]){4}";
 					if (field.matches(pattern)) {
@@ -168,7 +169,13 @@ public class ReflectionUtils {
 				}
 				
 				return formatter.parse(field);
-			}
+			}else if(java.lang.Enum.class.isAssignableFrom(fieldType)){
+				Object[] enumValues = fieldType.getEnumConstants();
+				for (int i = 0; i < enumValues.length; i++) {
+					if(enumValues[i].toString().equals(field))
+						return enumValues[i];
+				}
+			}	
 		} catch (SecurityException e) {
 			logger.error(e.getMessage());
 			throw new ReflectionException(e);
@@ -182,7 +189,8 @@ public class ReflectionUtils {
 	}
 	
 	public static Object castField(Class<?> clase, String fieldName, String field) throws ReflectionException {
-		return castField(clase, fieldName, field, null);
+		SimpleDateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+		return castField(clase, fieldName, field, m_ISO8601Local);
 	}
 
 	
