@@ -174,35 +174,23 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see ar.com.lakaut.sig.core.dao.Dao#save(ar.com.lakaut.sig.core.domain.BaseEntity)
-	 */
 	@Override
 	public void save(T object) throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().save(object);
 		object.setVersion(object.getVersion()+1);
 	}
 
-	/* (non-Javadoc)
-	 * @see ar.com.lakaut.sig.core.dao.Dao#delete(ar.com.lakaut.sig.core.domain.BaseEntity)
-	 */
 	@Override
 	public void delete(T object)  throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().delete(object);
 		object.setVersion(object.getVersion()+1);
 	}
 
-	/* (non-Javadoc)
-	 * @see ar.com.lakaut.sig.core.dao.Dao#update(ar.com.lakaut.sig.core.domain.BaseEntity)
-	 */
 	public void update(T object)  throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().merge(object);
 		object.setVersion(object.getVersion()+1);
 	}
 
-	/* (non-Javadoc)
-	 * @see ar.com.lakaut.sig.core.dao.Dao#saveOrUpdate(ar.com.lakaut.sig.core.domain.BaseEntity)
-	 */
 	@Override
 	public void saveOrUpdate(T object) throws InternalErrorException {
 		try {
@@ -247,9 +235,6 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 			return object;
 	}
 	
-	/* (non-Javadoc)
-	 * @see ar.com.lakaut.sig.core.dao.Dao#getIds()
-	 */
 	@SuppressWarnings("unchecked")
 	public List<Integer> getIds() throws InternalErrorException{
         Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
