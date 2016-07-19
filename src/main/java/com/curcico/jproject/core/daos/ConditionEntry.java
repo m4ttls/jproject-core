@@ -13,6 +13,8 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 
 import com.curcico.jproject.core.daos.ConditionComplex.Operator;
+import com.curcico.jproject.core.exception.BaseException;
+import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.utils.ReflectionUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -30,14 +32,17 @@ public abstract class ConditionEntry extends Condition {
 	  SIMPLE, ARRAY, GROUP, EMPTY, INVALID 
 	}
 	
+
 	/**
+	 * @param clase
 	 * @param criteria
 	 * @param alias
 	 * @param translations
 	 * @return
+	 * @throws InternalErrorException
 	 */
-	public abstract Criterion resolve(Criteria criteria, Set<ManagerAlias> alias,
-			Map<String, String> translations);
+	public abstract Criterion resolve(Class<?> clase, Criteria criteria, Set<ManagerAlias> alias,
+			Map<String, String> translations) throws InternalErrorException;
 	
 	/**
 	 * @param parameters

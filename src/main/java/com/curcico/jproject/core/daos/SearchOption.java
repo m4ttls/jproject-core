@@ -17,7 +17,8 @@ public enum SearchOption {
 	LESS("lt"),
 	LESS_EQUAL("le"),
 	GREATER("gt"),
-	GREATER_EQUAL("ge");
+	GREATER_EQUAL("ge"),
+	REGEX("re");
 	
 	private final String id;
 
@@ -63,6 +64,8 @@ public enum SearchOption {
 			return GREATER;	
 		case "ge":
 			return GREATER_EQUAL;
+		case "re":
+			return REGEX;
 		default:
 			return null;
 		}

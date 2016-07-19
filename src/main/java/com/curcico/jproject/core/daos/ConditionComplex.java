@@ -11,6 +11,8 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 
+import com.curcico.jproject.core.exception.InternalErrorException;
+
 /** Ofrece la posibilidad de agrupar ConditiosEntry bajo un agrupador AND u OR
  * @author alejandro
  *
@@ -62,20 +64,19 @@ public class ConditionComplex extends ConditionEntry {
 		return "ConditionComplex [operator=" + operator + ", conditions.size=" + conditions.size() + "]";
 	}
 
-	/* (non-Javadoc)
-	 * @see com.curcico.jproject.core.daos.ConditionEntry#resolve(org.hibernate.Criteria, java.util.Set, java.util.Map)
-	 */
-	public Criterion resolve(Criteria criteria, Set<ManagerAlias> alias, Map<String, String> translations) {
+	@Override
+	public Criterion resolve(Class<?> clase, Criteria criteria, Set<ManagerAlias> alias, Map<String, String> translations) 
+		throws InternalErrorException{
 		if(operator==Operator.OR){
 			Disjunction cr = Restrictions.disjunction();
 			for (ConditionEntry conditionEntry : conditions) {
-				cr.add(conditionEntry.resolve(criteria, alias, translations));
+				cr.add(conditionEntry.resolve(clase, criteria, alias, translations));
 			}
 			return cr;
 		} else {
 			Conjunction cr = Restrictions.conjunction();
 			for (ConditionEntry conditionEntry : conditions) {
-				cr.add(conditionEntry.resolve(criteria, alias, translations));
+				cr.add(conditionEntry.resolve(clase, criteria, alias, translations));
 			}
 			return cr;
 		}

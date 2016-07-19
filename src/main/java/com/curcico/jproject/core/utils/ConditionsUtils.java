@@ -29,6 +29,14 @@ import com.google.gson.JsonParser;
 
 public class ConditionsUtils {
 
+	
+	/** Deprecated, utilizar el ConditionEntry.transformFilters
+	 * @param clase
+	 * @param filters
+	 * @return
+	 * @throws BaseException
+	 */
+	@Deprecated
 	public static List<ConditionEntry> transformFilters(Class<?> clase,
 			String filters) throws BaseException {
 		try {
@@ -78,6 +86,13 @@ public class ConditionsUtils {
 		return null;
 	}
 
+	/** Deprecated, utilizar el ConditionEntry.transformFilters
+	 * @param clase
+	 * @param filters
+	 * @return
+	 * @throws Exception
+	 */
+	@Deprecated
 	public static List<ConditionEntry> transformFiltersComplex(Class<?> clase,
 			String filters) throws Exception {
 		List<ConditionEntry> conditions = new ArrayList<ConditionEntry>();
@@ -121,6 +136,7 @@ public class ConditionsUtils {
 		return conditions;
 	}
 
+	@Deprecated
 	static ConditionSimple conditionSimpleParser(Class<?> clase,
 			JsonObject jsonObject) throws Exception {
 		String field = jsonObject.get("field") == null ? null : jsonObject.get(
@@ -133,6 +149,7 @@ public class ConditionsUtils {
 		return ConditionsUtils.getConditionSimple(clase, field, searchOp, data);
 	}
 
+	@Deprecated
 	public static ConditionSimple getConditionSimple(Class<?> clase,
 			String field, SearchOption searchOp, String data) throws Exception {
 		Object value = null;
@@ -192,6 +209,7 @@ public class ConditionsUtils {
 		return result;
 	}
 
+	@Deprecated
 	public static void addConditionSimple(List<ConditionEntry> filters, Class<?> class1,
 			String searchField, String searchOper, String searchString) throws Exception {
 		if(filters != null && !filters.isEmpty() && 

@@ -1,5 +1,6 @@
 package com.curcico.jproject.core.daos;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,6 +36,13 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	@Autowired
 	protected SessionFactory sessionFactory;
 	
+	
+    public CommonDao() {
+        ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+        this.typeParameterClass = (Class<T>)type.getActualTypeArguments()[0];
+    }
+	
+    @Deprecated
     public CommonDao(Class<T> typeParameterClass) {
         this.typeParameterClass = typeParameterClass;
     }
@@ -141,14 +149,15 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	 * @param filters
 	 * @throws InternalErrorException 
 	 */
-	protected Set<ManagerFetchs> setFilters(Criteria criteria, List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs) throws InternalErrorException {
+	protected Set<ManagerFetchs> setFilters(Criteria criteria, List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs) 
+			throws InternalErrorException {
 		Map<String, String> translations = new HashMap<String, String>();
 		Set<ManagerFetchs> result = null;
 		Set<ManagerAlias> alias = getAlias();
 		
 		if(filters!=null){				
 			for (ConditionEntry conditionEntry : filters) {
-				criteria.add(conditionEntry.resolve(criteria, alias, translations));
+				criteria.add(conditionEntry.resolve(typeParameterClass, criteria, alias, translations));
 			}
 		}
 		

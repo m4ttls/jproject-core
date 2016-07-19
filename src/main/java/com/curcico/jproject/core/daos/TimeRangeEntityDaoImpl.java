@@ -13,8 +13,8 @@ public abstract class TimeRangeEntityDaoImpl<T extends TimeRangeEntity>
 	implements TimeRangeEntityDao<T> {
 
 	
-    public TimeRangeEntityDaoImpl(Class<T> typeParameterClass) {
-        super(typeParameterClass);
+    public TimeRangeEntityDaoImpl() {
+        super();
     }
 
 	/* (non-Javadoc)

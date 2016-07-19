@@ -1,10 +1,13 @@
 package com.curcico.jproject.core.daos;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +15,9 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+
+import com.curcico.jproject.core.exception.BaseException;
+import com.curcico.jproject.core.exception.InternalErrorException;
 
 
 
@@ -132,8 +138,10 @@ public class ConditionSimple extends ConditionEntry {
 		return true;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
-	public Criterion resolve(Criteria criteria, Set<ManagerAlias> alias, Map<String, String> translations) {
+	public Criterion resolve(Class<?> clase, Criteria criteria, Set<ManagerAlias> alias, Map<String, String> translations) 
+			throws InternalErrorException{
 		Criterion criterion = null;
 		String field = transform(column);
 		Object value = this.getValue();
@@ -187,12 +195,16 @@ public class ConditionSimple extends ConditionEntry {
 				criterion =(Restrictions.isNotNull(field));
 				break;
 			case IN:
-				if(value instanceof List)
-					criterion =(Restrictions.in(field, (List<Object>) value));
+				if(value instanceof Collection && !((Collection<Object>)value).isEmpty())
+					criterion =(Restrictions.in(field, (Collection<Object>) value));
+				else 
+					criterion = Restrictions.sqlRestriction("(1=0)");
 				break;
 			case NOT_IN:
-				if(value instanceof List)
-					criterion =(Restrictions.not(Restrictions.in(field, (List<Object>) value)));
+				if(value instanceof Collection && !((Collection<Object>)value).isEmpty())
+					criterion =(Restrictions.not(Restrictions.in(field, (Collection<Object>) value)));
+				else 
+					criterion = Restrictions.sqlRestriction("(1=1)");
 				break;
 			case LESS:
 				criterion =(Restrictions.lt(field, value));
@@ -206,9 +218,22 @@ public class ConditionSimple extends ConditionEntry {
 			case GREATER_EQUAL:
 				criterion =(Restrictions.ge(field, value));
 				break;
-//			case REGEX:
-//				criterion =(Restrictions.sqlRestriction(" regexp_like({alias}." + field + ", '" + value + "' , 'i') "));
-//				break;
+			case REGEX:
+				String columnName = field;
+				try {
+					PropertyDescriptor[] desc = 
+							Introspector.getBeanInfo(clase).getPropertyDescriptors();
+					for (PropertyDescriptor propertyDescriptor : desc) {
+						if(propertyDescriptor.getName().equals(field)){
+							javax.persistence.Column a = propertyDescriptor.getReadMethod().getAnnotation(javax.persistence.Column.class);
+							columnName = a.name();
+						}
+					}
+				} catch (SecurityException | IntrospectionException e) {
+					throw new InternalErrorException(e);
+				}
+				criterion =(Restrictions.sqlRestriction(" regexp_like({alias}." + columnName + ", '" + value + "' , 'i') "));
+				break;
 //			case ACTIVE:
 //				criterion =(Restrictions.sqlRestriction(" ({alias}.vigencia_desde <= sysdate and ({alias}.vigencia_hasta is null or {alias}.vigencia_hasta >= sysdate)) "));
 //				break;
@@ -282,10 +307,10 @@ public class ConditionSimple extends ConditionEntry {
 			case GREATER_EQUAL:
 				restriction = this.getColumn() + ">=:" + parameterName ;
 				break;	
-//			case REGEX:
-//				// funciona para string, numeros, fechas y booleanos
-//				restriction = "REGEXP_LIKE(" + this.getColumn() + ", :" + parameterName + ")" ;
-//				break;
+			case REGEX:
+				// funciona para string, numeros, fechas y booleanos
+				restriction = "REGEXP_LIKE(" + this.getColumn() + ", :" + parameterName + ")" ;
+				break;
 //			case ACTIVE:
 //				restriction = "(vigencia_desde <= sysdate and (vigencia_hasta is null or vigencia_hasta >= sysdate))";
 //				break;
