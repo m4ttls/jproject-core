@@ -2,6 +2,7 @@ package com.curcico.jproject.core.daos;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -68,7 +69,7 @@ public class NativeDaoImpl {
 			String queryBase = "SELECT COUNT(1) FROM (" + getQueryBase (queryStr, conditions, parameters) + ")";
 			SQLQuery q = sessionFactory.getCurrentSession().createSQLQuery(queryBase);
 			setParameters(q, parameters);
-			return ((BigDecimal) q.uniqueResult()).longValue();
+			return ((BigInteger) q.uniqueResult()).longValue();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new InternalErrorException(e);
