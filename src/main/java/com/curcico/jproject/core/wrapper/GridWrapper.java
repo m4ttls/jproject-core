@@ -29,7 +29,7 @@ public class GridWrapper<T> {
 		this.records = records;
 		this.rows = rows;
 	}
-	
+
 	/**
 	 * @return the page
 	 */

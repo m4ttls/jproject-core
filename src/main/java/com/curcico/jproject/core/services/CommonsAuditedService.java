@@ -52,7 +52,7 @@ public abstract class CommonsAuditedService<T extends BaseAuditedEntity, U exten
 	@Transactional(rollbackFor=Exception.class)
 	public void delete(T entity, Integer userId) throws BaseException{
 		if(entity!=null && entity.getId()!=null && userId!=null){
-			entity = findById(entity.getId());
+			entity = loadEntityById(entity.getId());
 			dao.delete(entity);
 		} else {
 			throw new BusinessException("invalid.parameters");

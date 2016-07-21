@@ -25,8 +25,10 @@ import org.hibernate.proxy.LazyInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.curcico.jproject.core.entities.BaseEntity;
+import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.utils.ConditionsUtils;
+import com.curcico.jproject.core.wrapper.GridWrapper;
 
 public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 
@@ -37,7 +39,8 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	protected SessionFactory sessionFactory;
 	
 	
-    public CommonDao() {
+    @SuppressWarnings("unchecked")
+	public CommonDao() {
         ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
         this.typeParameterClass = (Class<T>)type.getActualTypeArguments()[0];
     }
@@ -77,6 +80,18 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	public Long countByFilters(List<? extends ConditionEntry> filters) throws InternalErrorException {
 		try {
 			Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
+			setFilters(criteria, filters, null);
+			criteria.setProjection(Projections.countDistinct("id"));
+			return (Long) criteria.uniqueResult();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new InternalErrorException(e);
+		}
+	}
+	
+	@Override
+	public Long countByFilters(Criteria criteria, List<? extends ConditionEntry> filters) throws InternalErrorException {
+		try {
 			setFilters(criteria, filters, null);
 			criteria.setProjection(Projections.countDistinct("id"));
 			return (Long) criteria.uniqueResult();
@@ -131,6 +146,17 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 			logger.error(e.getMessage(), e);
 			throw new InternalErrorException(e);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public GridWrapper<? extends T> findByFiltersGridWrapper(List<? extends ConditionEntry> filters, 
+			Integer page, Integer rows, 
+			String orderBy, String orderMode,
+			Set<ManagerFetchs> fetchs) throws BaseException {
+		Long total = countByFilters(filters);
+		Collection<T> resultado = (Collection<T>) this.findByFilters(filters, page, rows, orderBy, orderMode, fetchs);
+		return new GridWrapper<T>(page, rows, total, resultado);
 	}
 	
 	@Override
