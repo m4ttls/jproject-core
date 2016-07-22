@@ -4,6 +4,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -16,8 +17,8 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
-import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.InternalErrorException;
+import com.curcico.jproject.core.utils.ReflectionUtils;
 
 
 
@@ -71,6 +72,23 @@ public class ConditionSimple extends ConditionEntry {
 				this.condition = SearchOption.EQUAL;
 			}
 		}
+	}
+	
+	public static ConditionSimple getConditionSimple(Class<?> clase,
+			String field, SearchOption searchOp, String data) throws Exception {
+		Object value = null;
+		if (clase == null || field == null || searchOp == null) {
+			throw new InvalidParameterException(
+					"los.parametros.obligatorios.no.pueden.ser.null");
+		}
+		if (SearchOption.isRequiredFieldValue(searchOp)) {
+			value = ReflectionUtils.castField(clase, field, data);
+			if (value == null) {
+				throw new InvalidParameterException(
+						"la.operacion.requiere.que.el.campo.data.no.sea.nulo");
+			}
+		}
+		return new ConditionSimple(field, searchOp, value);
 	}
 
 	public String getColumn() {

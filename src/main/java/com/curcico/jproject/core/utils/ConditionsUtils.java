@@ -146,25 +146,7 @@ public class ConditionsUtils {
 		String data = jsonObject.get("data") == null ? null : jsonObject.get(
 				"data").getAsString();
 		SearchOption searchOp = SearchOption.getSearchOption(op);
-		return ConditionsUtils.getConditionSimple(clase, field, searchOp, data);
-	}
-
-	@Deprecated
-	public static ConditionSimple getConditionSimple(Class<?> clase,
-			String field, SearchOption searchOp, String data) throws Exception {
-		Object value = null;
-		if (clase == null || field == null || searchOp == null) {
-			throw new InvalidParameterException(
-					"los.parametros.obligatorios.no.pueden.ser.null");
-		}
-		if (SearchOption.isRequiredFieldValue(searchOp)) {
-			value = ReflectionUtils.castField(clase, field, data);
-			if (value == null) {
-				throw new InvalidParameterException(
-						"la.operacion.requiere.que.el.campo.data.no.sea.nulo");
-			}
-		}
-		return new ConditionSimple(field, searchOp, value);
+		return ConditionSimple.getConditionSimple(clase, field, searchOp, data);
 	}
 
 	public static List<String> getNameSequence(String strJson)
@@ -215,7 +197,7 @@ public class ConditionsUtils {
 		if(filters != null && !filters.isEmpty() && 
 				class1 != null && searchField != null && !searchField.isEmpty() &&
 				searchString != null && !searchString.isEmpty()){
-			filters.add(getConditionSimple(class1, searchField, SearchOption.getSearchOption(searchOper), searchString));
+			filters.add(ConditionSimple.getConditionSimple(class1, searchField, SearchOption.getSearchOption(searchOper), searchString));
 		}
 	}
 
