@@ -35,6 +35,16 @@ public class NativeDaoImplTest {
 															+ "FROM DUAL) "
 											+  "WHERE 1=1 ";
 	
+	private static final String queryTest_02 = "SELECT * from ("
+															+ "SELECT SYSDATE as fecha, "
+															+ "10333 as entero, "
+															+ "'ALGO' as texto, "
+															+ "1 as booleano, "
+															+ "10.25 as moneda "
+															+ "FROM DUAL) "
+												+  "WHERE 1=:arg_valor ";
+	
+	
 	private static final String queryTest_03 = "SELECT SYSDATE as fecha, "
 												+ "10333 as entero, "
 												+ "'ALGO' as texto, "
@@ -171,10 +181,16 @@ public class NativeDaoImplTest {
 	
 	@Test
 	public void test_findByFilters_10() throws Exception {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("arg_valor", new Integer(1));
 		String filter = "{'field':'fecha','op':'ge','data':'2006-12-11T14:16:56Z'}";
+		List<ConditionEntry> filters = ConditionEntry.transformNativeFilters(filter);
 		@SuppressWarnings("unchecked")
-		GridWrapper<Object> filas = (GridWrapper<Object>) dao.findByFilters(queryTest_03, 
-				null, ConditionEntry.transformNativeFilters(filter), 1, 10, "texto", null, GridWrapper.class);
+		GridWrapper<Object> filas = (GridWrapper<Object>) dao.findByFilters(queryTest_02, 
+				parameters, filters, 1, 10, "texto", null, GridWrapper.class);
+		// lo ejecuto nuevamente para comprobar que los parametros y filters no hayan sido corrompidos
+		filas = (GridWrapper<Object>) dao.findByFilters(queryTest_02, 
+				parameters, filters, 1, 10, "texto", null, GridWrapper.class);
 		Assert.assertFalse(filas.getRows().isEmpty());
 		Assert.assertTrue(filas.getRecords()>0);
 	}

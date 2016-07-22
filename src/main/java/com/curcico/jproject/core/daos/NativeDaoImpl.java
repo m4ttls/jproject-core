@@ -66,9 +66,12 @@ public class NativeDaoImpl {
 								) throws BaseException {
 		try {
 			if(parameters==null) parameters = new HashMap<String, Object>();
-			String queryBase = "SELECT COUNT(1) FROM (" + getQueryBase (queryStr, conditions, parameters) + ")";
+			Map<String, Object> parametrosInternos = new HashMap<String, Object>();
+			if(parameters!=null) 
+				parametrosInternos.putAll(parameters);
+			String queryBase = "SELECT COUNT(1) FROM (" + getQueryBase (queryStr, conditions, parametrosInternos) + ")";
 			SQLQuery q = sessionFactory.getCurrentSession().createSQLQuery(queryBase);
-			setParameters(q, parameters);
+			setParameters(q, parametrosInternos);
 			return ((BigInteger) q.uniqueResult()).longValue();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
