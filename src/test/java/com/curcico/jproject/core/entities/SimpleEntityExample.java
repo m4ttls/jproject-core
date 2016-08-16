@@ -2,10 +2,6 @@ package com.curcico.jproject.core.entities;
 
 public class SimpleEntityExample extends BaseEntity {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private String code;
 	
 	public SimpleEntityExample() {

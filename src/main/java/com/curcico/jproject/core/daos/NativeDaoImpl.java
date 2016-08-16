@@ -20,10 +20,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +43,8 @@ import com.google.gson.JsonObject;
  */
 @Repository
 public class NativeDaoImpl {
-
-	protected Logger logger = Logger.getLogger(getClass());
+	
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
     @Autowired
 	protected SessionFactory sessionFactory;

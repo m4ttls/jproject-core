@@ -17,7 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.curcico.jproject.core.entities.BaseEntity;
@@ -28,9 +29,9 @@ import com.curcico.jproject.core.exception.ReflectionException;
 
 
 public class ReflectionUtils {
+	
+	static protected Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
-		// Logger
-	private static Logger logger = Logger.getLogger(ReflectionUtils.class);
 
 		// Metodos
 	public static Object getInstance(String className) throws ReflectionException {

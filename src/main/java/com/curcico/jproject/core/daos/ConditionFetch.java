@@ -4,14 +4,15 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.curcico.jproject.core.exception.InternalErrorException;
 
 public class ConditionFetch extends Condition {
 	
-	Logger logger = Logger.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private Set<ManagerFetchs> fetchs;
 

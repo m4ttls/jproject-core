@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
 */
 public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> implements Service<T> {
 
-	protected  final Logger logger = Logger.getLogger(getClass());
+	protected  final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	protected  U dao;
 

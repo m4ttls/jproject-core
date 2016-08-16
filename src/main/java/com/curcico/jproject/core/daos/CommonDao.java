@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
@@ -22,6 +21,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.curcico.jproject.core.entities.BaseEntity;
@@ -32,7 +33,7 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
 
 public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 
-	protected Logger logger = Logger.getLogger(getClass());
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	protected final Class<T> typeParameterClass;
 	
 	@Autowired

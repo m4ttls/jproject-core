@@ -13,8 +13,6 @@ import javax.persistence.TableGenerator;
 @Entity(name="TEST_VERSIONED_ENTITY")
 public class OneVersionedEntity extends BaseEntity {
 
-	private static final long serialVersionUID = 4734579835587049632L;
-
 	private String descripcion;
 	
 	private OneVersionedTimeRangeEntity vtr;
