@@ -227,6 +227,7 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 	
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public GridWrapper<T> findByFiltersGridWrapper(List<ConditionEntry> filters, Integer page, Integer rows, String orderBy, String orderMode,
 			Set<ManagerFetchs> fetchs) throws BaseException{
 		return (GridWrapper<T>) dao.findByFiltersGridWrapper(filters, page, rows, orderBy, orderMode, fetchs);

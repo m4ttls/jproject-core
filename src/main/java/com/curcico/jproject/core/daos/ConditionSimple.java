@@ -16,7 +16,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
-import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.InternalErrorException;
 
 
