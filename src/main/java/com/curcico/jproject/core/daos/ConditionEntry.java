@@ -13,7 +13,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 
 import com.curcico.jproject.core.daos.ConditionComplex.Operator;
-import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.utils.ReflectionUtils;
 import com.google.gson.JsonArray;

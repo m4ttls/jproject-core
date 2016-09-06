@@ -20,10 +20,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +43,8 @@ import com.google.gson.JsonObject;
  */
 @Repository
 public class NativeDaoImpl {
-
-	protected Logger logger = Logger.getLogger(getClass());
+	
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
     @Autowired
 	protected SessionFactory sessionFactory;
@@ -66,9 +67,12 @@ public class NativeDaoImpl {
 								) throws BaseException {
 		try {
 			if(parameters==null) parameters = new HashMap<String, Object>();
-			String queryBase = "SELECT COUNT(1) FROM (" + getQueryBase (queryStr, conditions, parameters) + ")";
+			Map<String, Object> parametrosInternos = new HashMap<String, Object>();
+			if(parameters!=null) 
+				parametrosInternos.putAll(parameters);
+			String queryBase = "SELECT COUNT(1) FROM (" + getQueryBase (queryStr, conditions, parametrosInternos) + ")";
 			SQLQuery q = sessionFactory.getCurrentSession().createSQLQuery(queryBase);
-			setParameters(q, parameters);
+			setParameters(q, parametrosInternos);
 			return ((BigInteger) q.uniqueResult()).longValue();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

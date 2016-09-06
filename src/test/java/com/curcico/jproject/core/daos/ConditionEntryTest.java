@@ -16,11 +16,6 @@ import com.curcico.jproject.core.entities.TestEntity;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ConditionEntryTest {
 	
-//	@Autowired
-//	OneVersionedTimeRangeEntityService vtrService;
-//	
-//	@Autowired
-//	OneVersionedEntityService veService;
 	
 	/*Condicion sin campo data requerido (nn=NOT NULL)*/
 	String filtroSimple01 		= "{'field':'id','op':'nn'}";

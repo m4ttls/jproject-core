@@ -3,7 +3,6 @@ package com.curcico.jproject.core.services;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.curcico.jproject.core.daos.Dao;
@@ -17,8 +16,6 @@ import com.curcico.jproject.core.exception.BusinessException;
  * la actualización de los campos de auditoría.
 */
 public abstract class CommonsAuditedService<T extends BaseAuditedEntity, U extends Dao<T>> extends CommonsService<T, U>{
-
-	protected  final Logger logger = Logger.getLogger(getClass());
 	
 	@Transactional(rollbackFor=Exception.class)
 	public T createOrUpdate(T entity, Integer userId) throws BaseException {
