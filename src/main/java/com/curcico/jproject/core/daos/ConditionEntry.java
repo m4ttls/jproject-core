@@ -180,6 +180,7 @@ public abstract class ConditionEntry extends Condition {
 			} else {
 				value = ReflectionUtils.castField(clase, field, data);
 			}
+			//TODO evaluar si es un enum y en caso de serlo, aplicar el valor correspondiente.
 			if (value == null) {
 				throw new InvalidParameterException("la.operacion.requiere.que.el.campo.data.no.sea.nulo");
 			}
