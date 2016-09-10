@@ -1,5 +1,8 @@
 package com.curcico.jproject.core.daos;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.FetchMode;
 
 /**
@@ -56,6 +59,17 @@ public class ManagerFetchs {
 		super();
 	}
 
+	public static Set<ManagerFetchs>transformFetchs(String fetchsArray){
+		if(fetchsArray==null || fetchsArray.equals("")) 
+			return null;
+		String [] fetchs = fetchsArray.replaceAll("[", "").replaceAll("]", "").split(",");
+		Set<ManagerFetchs> f = new HashSet<>();
+		for (String string : fetchs) {
+			f.add(new ManagerFetchs(string));
+		}
+		return f;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
