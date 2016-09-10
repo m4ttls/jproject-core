@@ -42,6 +42,7 @@
 			<id>acurci</id>
 		</developer>
 	</developers>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
 
 	<properties>
 		<spring.version>4.3.2.RELEASE</spring.version>
@@ -236,11 +237,25 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate4</artifactId>
+		    <version>2.7.7</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-annotations</artifactId>
+		    <version>2.7.7</version>
+		</dependency>
+
+		
+		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-
+ 
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -260,8 +275,7 @@
 			<version>1.7.21</version>
 		</dependency>
 
-
-		<!-- TEST -->
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 		    <groupId>junit</groupId>
 		    <artifactId>junit</artifactId>
