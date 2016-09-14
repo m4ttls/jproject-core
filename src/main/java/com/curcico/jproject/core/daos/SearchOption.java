@@ -31,7 +31,7 @@ public enum SearchOption {
 	}
 	
 	public static SearchOption getSearchOption(String id){
-		switch(id){
+		switch(id.toLowerCase()){
 		case "eq":
 			return EQUAL;
 		case "ne":

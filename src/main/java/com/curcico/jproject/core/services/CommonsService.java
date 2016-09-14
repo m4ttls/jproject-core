@@ -19,7 +19,6 @@ import com.curcico.jproject.core.daos.ManagerFetchs;
 import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.BusinessException;
-import com.curcico.jproject.core.utils.ConditionsUtils;
 import com.curcico.jproject.core.wrapper.GridWrapper;
 
 
@@ -49,12 +48,12 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 	@Override
 	@Transactional(readOnly = true)
 	public T loadEntityById(Integer id, String[] attributesInitialized) throws BaseException{
-		return loadEntityWithManagedFetchsById(id, ConditionsUtils.createdFetchs(attributesInitialized));
+		return loadEntityById(id, ManagerFetchs.createdFetchs(attributesInitialized));
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public T loadEntityWithManagedFetchsById(Integer id, Set<ManagerFetchs> fetchs)
+	public T loadEntityById(Integer id, Set<ManagerFetchs> fetchs)
 			throws BaseException {
 		return dao.loadEntityById(id, fetchs);
 	}
@@ -71,43 +70,7 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 			Set<ManagerFetchs> fetchs) throws BaseException {
 			return dao.loadEntityByFilters(filters, fetchs);
 	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findById(Integer id) throws BaseException{
-			return dao.loadEntityById(id);
-	}
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findById(Integer id, String[] attributesInitialized) throws BaseException{
-		return findEntityById(id, ConditionsUtils.createdFetchs(attributesInitialized));
-	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findEntityById(Integer id, Set<ManagerFetchs> fetchs)
-			throws BaseException {
-		return dao.loadEntityById(id, fetchs);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException {
-		return dao.loadEntityByFilters(filters);
-	}
-		
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findEntityByFilters(List<? extends ConditionEntry> filters,
-			Set<ManagerFetchs> fetchs) throws BaseException {
-			return dao.loadEntityByFilters(filters, fetchs);
-	}
-		
+			
 	@Override
 	@Transactional(rollbackFor=Exception.class)
 	public T createOrUpdate(T entity, Integer userId) throws BaseException {

@@ -2,13 +2,11 @@ package com.curcico.jproject.core.utils;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -18,7 +16,6 @@ import com.curcico.jproject.core.daos.ConditionComplex;
 import com.curcico.jproject.core.daos.ConditionComplex.Operator;
 import com.curcico.jproject.core.daos.ConditionEntry;
 import com.curcico.jproject.core.daos.ConditionSimple;
-import com.curcico.jproject.core.daos.ManagerFetchs;
 import com.curcico.jproject.core.daos.SearchOption;
 import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.BusinessException;
@@ -239,17 +236,6 @@ public class ConditionsUtils {
 			}
 		}
 		return filters;
-	}
-
-	public static Set<ManagerFetchs> createdFetchs(String[] args) {
-		if (args.length > 0) {
-			Set<ManagerFetchs> fetchs = new HashSet<ManagerFetchs>();
-			for (int i = 0; i < args.length; i++) {
-				fetchs.add(new ManagerFetchs(args[i]));
-			}
-			return fetchs;
-		}
-		return null;
 	}
 	
 	public static List<Object> transformJsonToList(Class<?> clase, String field, String data) 

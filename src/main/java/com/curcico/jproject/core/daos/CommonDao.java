@@ -44,11 +44,6 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
         ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
         this.typeParameterClass = (Class<T>)type.getActualTypeArguments()[0];
     }
-	
-    @Deprecated
-    public CommonDao(Class<T> typeParameterClass) {
-        this.typeParameterClass = typeParameterClass;
-    }
 
 	@Override
 	public Collection<? extends T> findAll() throws InternalErrorException {

@@ -34,4 +34,11 @@ public abstract class TimeRangeEntity extends BaseEntity {
 		return vigenciaDesde!=null && vigenciaDesde.before(now) && (vigenciaHasta==null || vigenciaHasta.after(now));
 	}
 	
+	@Override
+	public void extractMutableValues(Object newObject) {
+		super.extractMutableValues(newObject);
+		TimeRangeEntity other = (this.getClass().cast(newObject));
+		this.setVigenciaHasta(other.getVigenciaHasta());
+	}
+	
 }

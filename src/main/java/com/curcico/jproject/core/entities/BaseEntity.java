@@ -65,5 +65,8 @@ public abstract class BaseEntity {
 		return true;
 	}
 	
-	
+	public void extractMutableValues(Object newObject) {
+		BaseEntity other = (this.getClass().cast(newObject));
+		this.setVersion(other.getVersion());
+	}
 }

@@ -57,7 +57,7 @@ public interface Service<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	T loadEntityWithManagedFetchsById(Integer id, Set<ManagerFetchs> fetchs) throws BaseException;
+	T loadEntityById(Integer id, Set<ManagerFetchs> fetchs) throws BaseException;
 	
 	/**
 	 * @param filters
@@ -74,50 +74,6 @@ public interface Service<T extends BaseEntity> {
 	 */
 	T loadEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws BaseException;
 
-
-	/**
-	 * @param id
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated
-	T findById(Integer id) throws BaseException;
-	
-	/**
-	 * @param id
-	 * @param attributesInitialized
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated
-	T findById(Integer id, String[] attributesInitialized) throws BaseException;
-	
-	/**
-	 * @param id
-	 * @param fetchs
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated
-	T findEntityById(Integer id, Set<ManagerFetchs> fetchs) throws BaseException;
-	
-	/**
-	 * @param filters
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated	
-	T findEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException;
-	
-	/**
-	 * @param filters
-	 * @param fetchs
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated	
-	T findEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws BaseException;
-	
 	/**
 	 * @return
 	 * @throws BaseException

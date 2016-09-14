@@ -52,4 +52,9 @@ public abstract class BaseAuditedEntity extends BaseEntity {
 	public void setUpdatedTime(Timestamp updatedTime) {
 		this.updatedTime = updatedTime;
 	}
+	
+	@Override
+	public void extractMutableValues(Object newObject) {
+		super.extractMutableValues(newObject);
+	}
 }
