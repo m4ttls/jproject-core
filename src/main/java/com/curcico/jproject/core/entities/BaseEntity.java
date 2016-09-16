@@ -7,6 +7,8 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @MappedSuperclass
 @Access(AccessType.PROPERTY)
 public abstract class BaseEntity {
@@ -23,6 +25,7 @@ public abstract class BaseEntity {
 	}
 	
 	@Column(name="DELETED", nullable=true, length=1)
+	@ApiModelProperty(value="Marca de borrado", required=false, position=999)
 	public String getDeleted() {
 		return deleted;
 	}
@@ -36,6 +39,7 @@ public abstract class BaseEntity {
 	 */
 	@Version
 	@Column(name="VERSION")
+	@ApiModelProperty(value="Version de la entidad para control de concurrencia", required=false, position=999)
 	public Integer getVersion() {
 		return version;
 	}

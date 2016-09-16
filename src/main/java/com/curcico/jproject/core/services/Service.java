@@ -34,8 +34,16 @@ public interface Service<T extends BaseEntity> {
 	 * @param userId
 	 * @throws BaseException
 	 */
-	void delete(T object, Integer userId) throws BaseException;
+	T delete(T object, Integer userId) throws BaseException;
 
+	/**
+	 * @param id
+	 * @param version
+	 * @return
+	 * @throws BaseException
+	 */
+	T delete(Integer id, Integer version) throws BaseException;
+	
 	/**
 	 * @param id
 	 * @return

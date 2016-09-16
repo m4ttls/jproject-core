@@ -19,6 +19,7 @@ import com.curcico.jproject.core.daos.ManagerFetchs;
 import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.BusinessException;
+import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.wrapper.GridWrapper;
 
 
@@ -101,13 +102,22 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public void delete(T entity, Integer userId) throws BaseException{
+	public T delete(T entity, Integer userId) throws BaseException{
 		if(entity!=null && entity.getId()!=null && userId!=null){
 				this.createOrUpdate(entity, userId);
 				entity = loadEntityById(entity.getId());
 				dao.delete(entity);
-			return;
-		}	
+				return entity;
+		}
+		throw new InternalErrorException("invalid.parameters");
+	}
+	
+	@Override
+	@Transactional(rollbackFor=Exception.class)
+	public T delete(Integer id, Integer version) throws BaseException{
+		if(id==null || version==null) 
+			throw new InternalErrorException("invalid.parameters");
+		return dao.delete(id, version);
 	}
 	
 	@Override

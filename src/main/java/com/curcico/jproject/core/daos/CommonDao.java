@@ -205,30 +205,46 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	}
 	
 	@Override
-	public void save(T object) throws InternalErrorException{
+	public T save(T object) throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().save(object);
 		object.setVersion(object.getVersion()+1);
+		return object;
 	}
 
 	@Override
-	public void delete(T object)  throws InternalErrorException{
+	public T delete(T object)  throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().delete(object);
 		object.setVersion(object.getVersion()+1);
+		return object;
 	}
-
-	public void update(T object)  throws InternalErrorException{
-		this.sessionFactory.getCurrentSession().merge(object);
+	
+	@Override
+	public T delete(Integer id, Integer version)  throws InternalErrorException{
+		T object = this.loadEntityById(id);
+		if(version==null) throw new InternalErrorException("falta.parametro.version");
+		if(!object.getVersion().equals(version)) 
+			throw new InternalErrorException("entidad.desactualizada");
+		this.sessionFactory.getCurrentSession().delete(object);
 		object.setVersion(object.getVersion()+1);
+		return object;
 	}
 
 	@Override
-	public void saveOrUpdate(T object) throws InternalErrorException {
+	public T update(T object)  throws InternalErrorException{
+		this.sessionFactory.getCurrentSession().merge(object);
+		object.setVersion(object.getVersion()+1);
+		return object;
+	}
+
+	@Override
+	public T saveOrUpdate(T object) throws InternalErrorException {
 		try {
 			this.sessionFactory.getCurrentSession().saveOrUpdate(object);
 			object.setVersion(object.getVersion()+1);
 		} catch (Exception e) {
 			throw new InternalErrorException(e);
 		}
+		return object;
 	}
 
 	@Override

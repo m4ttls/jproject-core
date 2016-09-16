@@ -69,7 +69,7 @@ public interface Dao<T extends BaseEntity> {
 	 * @param object
 	 * @throws InternalErrorException
 	 */
-	void save(T object) throws InternalErrorException;
+	T save(T object) throws InternalErrorException;
 
 	/**
 	 * Elimina un objeto en la base de datos (utiliza la sentencia de
@@ -78,15 +78,25 @@ public interface Dao<T extends BaseEntity> {
 	 * @param object
 	 * @throws InternalErrorException
 	 */
-	void delete(T object) throws InternalErrorException;
+	T delete(T object) throws InternalErrorException;
 
+	/**
+	 * Elimina un objeto en la base de datos (utiliza la sentencia de
+	 * eliminación definia para la entidad)
+	 *
+	 * @param id
+	 * @param version
+	 * @throws InternalErrorException
+	 */
+	T delete(Integer id, Integer version) throws InternalErrorException;
+	
 	/**
 	 * Actualiza un objeto en la base de datos
 	 * 
 	 * @param object
 	 * @throws InternalErrorException
 	 */
-	void update(T object) throws InternalErrorException;
+	T update(T object) throws InternalErrorException;
 
 	/**
 	 * Guarda o actualiza un objeto en la base de datos
@@ -94,7 +104,7 @@ public interface Dao<T extends BaseEntity> {
 	 * @param object
 	 * @throws InternalErrorException
 	 */
-	void saveOrUpdate(T object) throws InternalErrorException;
+	T saveOrUpdate(T object) throws InternalErrorException;
 
 	/**
 	 * Total de registros de la tabla (incluye las condiciones definidas en el
