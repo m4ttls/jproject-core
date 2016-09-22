@@ -62,7 +62,7 @@ public class ManagerFetchs {
 	public static Set<ManagerFetchs>transformFetchs(String fetchsArray){
 		if(fetchsArray==null || fetchsArray.equals("")) 
 			return null;
-		String [] fetchs = fetchsArray.replaceAll("[", "").replaceAll("]", "").split(",");
+		String [] fetchs = fetchsArray.replaceAll("\\[", "").replaceAll("\\]", "").split(",");
 		Set<ManagerFetchs> f = new HashSet<>();
 		for (String string : fetchs) {
 			f.add(new ManagerFetchs(string));
