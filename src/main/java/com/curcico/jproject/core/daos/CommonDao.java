@@ -75,9 +75,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	public Long countByFilters(List<? extends ConditionEntry> filters) throws InternalErrorException {
 		try {
 			Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
-			setFilters(criteria, filters, null);
-			criteria.setProjection(Projections.countDistinct("id"));
-			return (Long) criteria.uniqueResult();
+			return countByFilters(criteria, filters);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new InternalErrorException(e);
@@ -87,6 +85,8 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	@Override
 	public Long countByFilters(Criteria criteria, List<? extends ConditionEntry> filters) throws InternalErrorException {
 		try {
+			List<ConditionEntry> conditions = new ArrayList<>();
+			conditions.addAll(filters);
 			setFilters(criteria, filters, null);
 			criteria.setProjection(Projections.countDistinct("id"));
 			return (Long) criteria.uniqueResult();
@@ -118,7 +118,9 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 						Integer page, Integer rows, String orderBy, String orderMode, Set<ManagerFetchs> fetchs) throws InternalErrorException {
 		try {
 			
-			setFilters(criteria, filters, fetchs);
+			List<ConditionEntry> conditions = new ArrayList<>();
+			conditions.addAll(filters);
+			setFilters(criteria, filters, null);
 			if(page!=null && page > 0 && rows!=null && rows > 0){
 				criteria.setMaxResults(rows);
 				criteria.setFirstResult((page - 1) * rows);

@@ -49,12 +49,11 @@ public class ConditionFetch extends Condition {
 			if(fetchsAvailables.contains(fetch)){
 				Set<ManagerAlias> aliasByColumn = getAlias(fetch.getFetch());
 				addAlias(criteria, alias, aliasByColumn, translations);
-			}else{
+			} else {
 				logger.error("FETCH NO PERMITIDO: " + fetch.getFetch());
 				throw new InternalErrorException("fetch.not.available");
 			}
 		}
-		
 	}
 	
 
