@@ -31,7 +31,10 @@ public class ReflectionUtils {
 
 		// Logger
 	private static Logger logger = Logger.getLogger(ReflectionUtils.class);
-
+	
+	// Allowed formats
+	private static String allowedDateFormats[] = new String[]{"yyyy-MM-dd'T'HH:mm:ss.S'Z'", "dd/MM/yyyy", "dd-MM-yyyy"};
+	
 		// Metodos
 	public static Object getInstance(String className) throws ReflectionException {
 		try {
@@ -158,16 +161,23 @@ public class ReflectionUtils {
 			}else if(fieldType == Boolean.class){
 				return Boolean.parseBoolean(field);
 			}else if(fieldType == java.util.Date.class || fieldType == java.sql.Date.class || fieldType == Timestamp.class ){
-				if(formatter == null){
-					String pattern = "([0-9]){2}-([0-9]){2}-([0-9]){4}";
-					if (field.matches(pattern)) {
-						formatter = new SimpleDateFormat("dd-MM-yyyy");
-					}else{
-						formatter = new SimpleDateFormat("dd/MM/yyyy");
-					}
+				
+				Object possibleDate =  parseDateWithMultiFormat(field, allowedDateFormats);
+				
+				// Si no tiene un formato de los perviamente establecidos, 
+				// y paso como parametro un formatter, pruebo con ese
+				if (possibleDate == null && formatter != null){
+					return formatter.parse(field);
 				}
 				
-				return formatter.parse(field);
+				// La parseo correctamente
+				if (possibleDate != null){
+					return possibleDate;
+				}
+				
+				// Como es nula, no la pudo parsear => Error de Parseo
+				throw new java.text.ParseException("Formato de fecha incorrecto.", 0);
+			
 			}else if(java.lang.Enum.class.isAssignableFrom(fieldType)){
 				Object[] enumValues = fieldType.getEnumConstants();
 				for (int i = 0; i < enumValues.length; i++) {
@@ -188,10 +198,42 @@ public class ReflectionUtils {
 	}
 	
 	public static Object castField(Class<?> clase, String fieldName, String field) throws ReflectionException {
-		SimpleDateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-		return castField(clase, fieldName, field, m_ISO8601Local);
+		return castField(clase, fieldName, field, null);
 	}
 
+	/**
+	 * Intenta parsear la fecha con los formatos indicados
+	 * @param posibleDate
+	 * @param formats
+	 * @return Un objeto Date en caso de poder pasearlo, null en otro caso
+	 */
+	public static Object parseDateWithMultiFormat(String posibleDate, String[] formats) {
+		
+		Object retVal = null;
+		for (String format : formats) {
+			try {
+				retVal = parseDateWithFormat(posibleDate, format);
+				break;
+			} catch (ParseException e) {
+				// No pudo parsearlo, prueba con otro formato
+				continue;
+			}
+		}
+		return retVal;
+	}
+	
+	/**
+	 * Parsea una fecha con un formato dado
+	 * @param date
+	 * @param format
+	 * @return
+	 * @throws ParseException
+	 */
+	private static Object parseDateWithFormat(String date, String format) throws ParseException  {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		dateFormat.setLenient(false); // Formato exacto
+		return dateFormat.parse(date);
+	}
 	
 	/**
 	 * @param Auxdocument
