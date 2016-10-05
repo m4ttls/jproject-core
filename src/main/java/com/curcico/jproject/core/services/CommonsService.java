@@ -100,24 +100,13 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 		return ;
 	}
 	
-	@Override
-	@Transactional(rollbackFor=Exception.class)
-	public T delete(T entity, Integer userId) throws BaseException{
-		if(entity!=null && entity.getId()!=null && userId!=null){
-				this.createOrUpdate(entity, userId);
-				entity = loadEntityById(entity.getId());
-				dao.delete(entity);
-				return entity;
-		}
-		throw new InternalErrorException("invalid.parameters");
-	}
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public T delete(Integer id, Integer version) throws BaseException{
-		if(id==null || version==null) 
+	public T delete(T object) throws BaseException{
+		if(object==null) 
 			throw new InternalErrorException("invalid.parameters");
-		return dao.delete(id, version);
+		return dao.delete(object);
 	}
 	
 	@Override

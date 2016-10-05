@@ -31,19 +31,10 @@ public interface Service<T extends BaseEntity> {
 
 	/**
 	 * @param object
-	 * @param userId
 	 * @throws BaseException
 	 */
-	T delete(T object, Integer userId) throws BaseException;
+	public T delete(T object) throws BaseException;
 
-	/**
-	 * @param id
-	 * @param version
-	 * @return
-	 * @throws BaseException
-	 */
-	T delete(Integer id, Integer version) throws BaseException;
-	
 	/**
 	 * @param id
 	 * @return

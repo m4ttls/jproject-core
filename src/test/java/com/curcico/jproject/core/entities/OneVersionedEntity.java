@@ -10,9 +10,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 @Entity(name="TEST_VERSIONED_ENTITY")
+@SQLDelete(sql="UPDATE TEST_VERSIONED_ENTITY SET deleted='1', version=version+1 WHERE id=? and version=?")
+@Where(clause="deleted is null")
 public class OneVersionedEntity extends BaseEntity {
 
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 4734579835587049632L;
 
 	private String descripcion;
