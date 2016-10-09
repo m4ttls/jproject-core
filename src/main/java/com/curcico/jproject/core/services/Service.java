@@ -33,8 +33,16 @@ public interface Service<T extends BaseEntity> {
 	 * @param object
 	 * @throws BaseException
 	 */
-	public T delete(T object) throws BaseException;
-
+	T delete(T object) throws BaseException;
+	
+	/**
+	 * @param entity
+	 * @param userId
+	 * @return
+	 * @throws BaseException
+	 */
+	T delete(T entity, Integer userId) throws BaseException;
+	
 	/**
 	 * @param id
 	 * @return
@@ -160,5 +168,6 @@ public interface Service<T extends BaseEntity> {
 	 */
 	GridWrapper<T> findByFiltersGridWrapper(List<ConditionEntry> filters, Integer page, Integer rows, String orderBy, String orderMode,
 			Set<ManagerFetchs> fetchs) throws BaseException;
+
 	
 }

@@ -110,6 +110,18 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 	}
 	
 	@Override
+	@Transactional(rollbackFor=Exception.class)
+	public T delete(T entity, Integer userId) throws BaseException{
+		if(entity!=null && entity.getId()!=null && userId!=null){
+			entity = loadEntityById(entity.getId());
+			dao.delete(entity);
+		} else {
+			throw new BusinessException("invalid.parameters");
+		}
+		return entity;
+	}
+	
+	@Override
 	@Transactional(readOnly = true)
 	public List<Integer> getIds() throws BaseException{
 			return dao.getIds();	
