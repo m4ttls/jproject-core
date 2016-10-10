@@ -10,10 +10,10 @@ import java.util.Collection;
  */
 public class GridWrapper<T> {
 	
-	Integer page 	 = 1;
-	Integer total	 = 1;
-	Long records = 0L;
-	Collection<T> rows;
+	Integer 		page 	 = 1;
+	Integer 	  	total	 = 1;
+	Long 		  	records  = 0L;
+	Collection<T> 	rows;
 	
 	public GridWrapper(Integer page, Integer pageSize, Long records,
 			Collection<T> rows) {
