@@ -7,7 +7,7 @@ import com.curcico.jproject.core.entities.BaseAuditedEntity;
 import com.curcico.jproject.core.exception.InternalErrorException;
 
 public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity> 
-	extends CommonDao<T>	
+	extends BaseEntityDaoImpl<T>	
 	implements BaseAuditedEntityDao<T> {
 
 	
@@ -56,28 +56,30 @@ public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity>
 		T entity = loadEntityById(object.getId());
 		if(!entity.getVersion().equals(object.getVersion()))
 				throw new InternalErrorException("concurrent.access.exception");
-		Timestamp now = new Timestamp(Calendar.getInstance().getTimeInMillis());
-		entity.setUpdatedByUser(user);
-		entity.setUpdatedTime(now);
-		entity.setDeleted("1");
-		return super.update(entity);
+		entity = this.update(entity, user);
+		return super.delete(entity);
 	}
 	
 	@Override
+	@Deprecated
 	public T delete(T object) throws InternalErrorException {
 		throw new UnsupportedOperationException("not supported");
 	}
 	
 	@Override
+	@Deprecated
 	public T update(T object) throws InternalErrorException {
 		throw new UnsupportedOperationException("not supported");
 	}
 	
 	@Override
+	@Deprecated
 	public T save(T object) throws InternalErrorException {
 		throw new UnsupportedOperationException("not supported");
 	}
 	
+	@Override
+	@Deprecated
 	public T saveOrUpdate(T object) throws InternalErrorException {
 		throw new UnsupportedOperationException("not supported");
 	}

@@ -30,7 +30,7 @@ import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.utils.ConditionsUtils;
 import com.curcico.jproject.core.wrapper.GridWrapper;
 
-public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
+public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEntityDao<T> {
 
 	protected Logger logger = Logger.getLogger(getClass());
 	protected final Class<T> typeParameterClass;
@@ -40,7 +40,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	
 	
     @SuppressWarnings("unchecked")
-	public CommonDao() {
+	public BaseEntityDaoImpl() {
         ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
         this.typeParameterClass = (Class<T>)type.getActualTypeArguments()[0];
     }

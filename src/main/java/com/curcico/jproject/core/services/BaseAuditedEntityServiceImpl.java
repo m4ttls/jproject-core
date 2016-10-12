@@ -9,14 +9,14 @@ import com.curcico.jproject.core.exception.BusinessException;
 import com.curcico.jproject.core.exception.InternalErrorException;
 
 public abstract class BaseAuditedEntityServiceImpl<T extends BaseAuditedEntity, U extends BaseAuditedEntityDao<T>>
-		extends CommonsService<T, U> 
+		extends BaseEntityServiceImpl<T, U> 
 		implements BaseAuditedEntityService<T> {
 
 	@Override
 	@Transactional(rollbackFor=Exception.class)
 	public T update(T object, Integer user) throws BaseException {
 		if(object!=null && object.getId()!=null && user!=null){
-			return dao.update(object, user);
+			return this.saveOrUpdate(object, user);
 		}
 		throw new InternalErrorException("invalid.parameters");
 	}
@@ -24,8 +24,8 @@ public abstract class BaseAuditedEntityServiceImpl<T extends BaseAuditedEntity, 
 	@Override
 	@Transactional(rollbackFor=Exception.class)
 	public T save(T object, Integer user) throws BaseException {
-		if(object!=null && object.getId()!=null && user!=null){
-			return dao.save(object, user);
+		if(object!=null && object.getId()==null && user!=null){
+			return this.saveOrUpdate(object, user);
 		}
 		throw new InternalErrorException("invalid.parameters");
 	}
@@ -33,10 +33,19 @@ public abstract class BaseAuditedEntityServiceImpl<T extends BaseAuditedEntity, 
 	@Override
 	@Transactional(rollbackFor=Exception.class)
 	public T saveOrUpdate(T object, Integer user) throws BaseException {
-		if(object!=null && object.getId()!=null && user!=null){
-			return dao.saveOrUpdate(object, user);
+		if(object != null && user != null){
+			if(entityValidate(object)){
+				if (object.getId()==null || object.getId().equals(0)){
+						dao.save(object, user);
+						return object;
+				} else {
+					dao.update(object, user);
+					return object;
+				}
+			}
 		}
-		throw new InternalErrorException("invalid.parameters");
+		logger.error("Some parameters (entity or userId) are invalid.");
+		throw new BusinessException("invalid.parameters");
 	}
 
 	@Override
@@ -49,6 +58,7 @@ public abstract class BaseAuditedEntityServiceImpl<T extends BaseAuditedEntity, 
 	}
 	
 	@Override
+	@Deprecated
 	@Transactional(rollbackFor=Exception.class)
 	public T createOrUpdate(T entity, Integer userId) throws BaseException {
 			if(entity != null && userId != null){
@@ -65,5 +75,5 @@ public abstract class BaseAuditedEntityServiceImpl<T extends BaseAuditedEntity, 
 			logger.error("Some parameters (entity or userId) are invalid.");
 			throw new BusinessException("invalid.parameters");
 	}
-
+	
 }

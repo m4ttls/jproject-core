@@ -4,7 +4,7 @@ import com.curcico.jproject.core.entities.BaseAuditedEntity;
 import com.curcico.jproject.core.exception.BaseException;
 
 public interface BaseAuditedEntityService<T extends BaseAuditedEntity> 
-			extends Service<T> {
+			extends BaseEntityService<T> {
 	
 	/**
 	 * @param object

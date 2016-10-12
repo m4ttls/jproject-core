@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.acurci</groupId>
 	<artifactId>jproject-core</artifactId>
-	<version>01.04.00</version>
+	<version>01.05.00</version>
 	<name>jproject-core</name>
 	<description>Funcionalidades genéricas para extender en aplicaciones java</description>
 	<packaging>jar</packaging>

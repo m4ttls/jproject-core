@@ -18,6 +18,7 @@ public abstract class BaseEntity {
 	protected Integer	version = 0;
 
 	@Transient
+	@ApiModelProperty(value="Identificador de la entidad")
 	public abstract Integer getId();
 	
 	public void setId(Integer id) {

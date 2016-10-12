@@ -18,7 +18,7 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
  *
  * @param <T>
  */
-public interface Dao<T extends BaseEntity> {
+public interface BaseEntityDao<T extends BaseEntity> {
 
 	/**
 	 * Busca una entidad por id
