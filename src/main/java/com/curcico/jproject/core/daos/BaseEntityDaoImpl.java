@@ -120,7 +120,7 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 			
 			List<ConditionEntry> conditions = new ArrayList<>();
 			conditions.addAll(filters);
-			setFilters(criteria, filters, null);
+			setFilters(criteria, filters, fetchs);
 			if(page!=null && page > 0 && rows!=null && rows > 0){
 				criteria.setMaxResults(rows);
 				criteria.setFirstResult((page - 1) * rows);
