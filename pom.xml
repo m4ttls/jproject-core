@@ -47,6 +47,7 @@
 	<properties>
 		<spring.version>4.3.2.RELEASE</spring.version>
 		<spring.security.version>4.1.3.RELEASE</spring.security.version>
+		<hibernate.version>4.3.11.Final</hibernate.version>
 		<jdk.version>1.7</jdk.version>
 	</properties>
 
@@ -190,7 +191,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.3.5.Final</version>
+			<version>${hibernate.version}</version>
 		</dependency>
 
 		<!-- Apache Commons -->
