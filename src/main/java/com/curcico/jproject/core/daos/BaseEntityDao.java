@@ -18,7 +18,7 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
  *
  * @param <T>
  */
-public interface Dao<T extends BaseEntity> {
+public interface BaseEntityDao<T extends BaseEntity> {
 
 	/**
 	 * Busca una entidad por id
@@ -79,16 +79,6 @@ public interface Dao<T extends BaseEntity> {
 	 * @throws InternalErrorException
 	 */
 	T delete(T object) throws InternalErrorException;
-
-	/**
-	 * Elimina un objeto en la base de datos (utiliza la sentencia de
-	 * eliminación definia para la entidad)
-	 *
-	 * @param id
-	 * @param version
-	 * @throws InternalErrorException
-	 */
-	T delete(Integer id, Integer version) throws InternalErrorException;
 	
 	/**
 	 * Actualiza un objeto en la base de datos

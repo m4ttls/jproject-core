@@ -19,7 +19,7 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
  *  por lo tanto, todo método declarado aquí debe ser implementado en dicha clase (o por lo menos declarado para que las clases hijas
  *  lo implementen)
  * */
-public interface Service<T extends BaseEntity> {
+public interface BaseEntityService<T extends BaseEntity> {
 
 	/**
 	 * @param object
@@ -27,22 +27,30 @@ public interface Service<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
+	@Deprecated
 	T createOrUpdate(T object, Integer userId) throws BaseException;
-
+	
 	/**
-	 * @param object
+	 * @param entity
 	 * @param userId
-	 * @throws BaseException
-	 */
-	T delete(T object, Integer userId) throws BaseException;
-
-	/**
-	 * @param id
-	 * @param version
 	 * @return
 	 * @throws BaseException
 	 */
-	T delete(Integer id, Integer version) throws BaseException;
+	@Deprecated
+	T delete(T entity, Integer userId) throws BaseException;
+
+	/**
+	 * @param entity
+	 * @return
+	 * @throws BaseException
+	 */
+	T saveOrUpdate(T entity) throws BaseException;
+
+	/**
+	 * @param object
+	 * @throws BaseException
+	 */
+	T delete(T object) throws BaseException;
 	
 	/**
 	 * @param id

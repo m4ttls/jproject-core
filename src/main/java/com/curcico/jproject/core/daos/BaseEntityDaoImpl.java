@@ -30,7 +30,7 @@ import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.utils.ConditionsUtils;
 import com.curcico.jproject.core.wrapper.GridWrapper;
 
-public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
+public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEntityDao<T> {
 
 	protected Logger logger = Logger.getLogger(getClass());
 	protected final Class<T> typeParameterClass;
@@ -40,7 +40,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	
 	
     @SuppressWarnings("unchecked")
-	public CommonDao() {
+	public BaseEntityDaoImpl() {
         ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
         this.typeParameterClass = (Class<T>)type.getActualTypeArguments()[0];
     }
@@ -120,7 +120,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 			
 			List<ConditionEntry> conditions = new ArrayList<>();
 			conditions.addAll(filters);
-			setFilters(criteria, filters, null);
+			setFilters(criteria, filters, fetchs);
 			if(page!=null && page > 0 && rows!=null && rows > 0){
 				criteria.setMaxResults(rows);
 				criteria.setFirstResult((page - 1) * rows);
@@ -215,20 +215,14 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 
 	@Override
 	public T delete(T object)  throws InternalErrorException{
-		this.sessionFactory.getCurrentSession().delete(object);
-		object.setVersion(object.getVersion()+1);
-		return object;
-	}
-	
-	@Override
-	public T delete(Integer id, Integer version)  throws InternalErrorException{
-		T object = this.loadEntityById(id);
-		if(version==null) throw new InternalErrorException("falta.parametro.version");
-		if(!object.getVersion().equals(version)) 
-			throw new InternalErrorException("entidad.desactualizada");
-		this.sessionFactory.getCurrentSession().delete(object);
-		object.setVersion(object.getVersion()+1);
-		return object;
+		/* Hago las validaciones por si me sobreescriben el delete con la anotación de hibernate */
+		if(object.getVersion()==null) throw new InternalErrorException("falta.parametro.version");
+		T entity = loadEntityById(object.getId());
+		if(!entity.getVersion().equals(object.getVersion()))
+				throw new InternalErrorException("concurrent.access.exception");
+		this.sessionFactory.getCurrentSession().delete(entity);
+		entity.setVersion(object.getVersion()+1);
+		return entity;
 	}
 
 	@Override
