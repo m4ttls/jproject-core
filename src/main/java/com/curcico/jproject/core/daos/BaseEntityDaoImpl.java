@@ -23,6 +23,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.exception.BaseException;
@@ -86,7 +87,8 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	public Long countByFilters(Criteria criteria, List<? extends ConditionEntry> filters) throws InternalErrorException {
 		try {
 			List<ConditionEntry> conditions = new ArrayList<>();
-			conditions.addAll(filters);
+			if(filters!=null)
+				conditions.addAll(filters);
 			setFilters(criteria, filters, null);
 			criteria.setProjection(Projections.countDistinct("id"));
 			return (Long) criteria.uniqueResult();
@@ -119,7 +121,8 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 		try {
 			
 			List<ConditionEntry> conditions = new ArrayList<>();
-			conditions.addAll(filters);
+			if(filters!=null)
+				conditions.addAll(filters);
 			setFilters(criteria, filters, fetchs);
 			if(page!=null && page > 0 && rows!=null && rows > 0){
 				criteria.setMaxResults(rows);
@@ -256,12 +259,14 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public T loadEntityByFilters(List<? extends ConditionEntry> filters)  throws InternalErrorException{
 		return loadEntityByFilters(filters, null);
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public T loadEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws InternalErrorException{			
 			Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
 			Set<ManagerFetchs> fetchUnloaded = setFilters(criteria, filters, fetchs);
