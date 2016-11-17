@@ -252,9 +252,6 @@ public class ConditionSimple extends ConditionEntry {
 				}
 				criterion =(Restrictions.sqlRestriction(" regexp_like({alias}." + columnName + ", '" + value + "' , 'i') "));
 				break;
-//			case ACTIVE:
-//				criterion =(Restrictions.sqlRestriction(" ({alias}.vigencia_desde <= sysdate and ({alias}.vigencia_hasta is null or {alias}.vigencia_hasta >= sysdate)) "));
-//				break;
 			default:
 				break;
 			}
@@ -329,16 +326,12 @@ public class ConditionSimple extends ConditionEntry {
 				// funciona para string, numeros, fechas y booleanos
 				restriction = "REGEXP_LIKE(" + this.getColumn() + ", :" + parameterName + ")" ;
 				break;
-//			case ACTIVE:
-//				restriction = "(vigencia_desde <= sysdate and (vigencia_hasta is null or vigencia_hasta >= sysdate))";
-//				break;
 			default:
 				break;
 		}
 		if(restriction!=null 
 				&& !(condition.equals(SearchOption.NULL) 
 						|| condition.equals(SearchOption.NOT_NULL)
-				//		|| condition.equals(SearchOption.ACTIVE)
 					)
 			) 
 			parameters.put(parameterName, auxiliarValue);

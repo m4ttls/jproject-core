@@ -13,21 +13,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.curcico.jproject.core.daos.BaseEntityDao;
 import com.curcico.jproject.core.daos.ConditionEntry;
 import com.curcico.jproject.core.daos.ConditionSimple;
-import com.curcico.jproject.core.daos.Dao;
 import com.curcico.jproject.core.daos.ManagerFetchs;
 import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.BusinessException;
-import com.curcico.jproject.core.utils.ConditionsUtils;
+import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.wrapper.GridWrapper;
 
 
 /**
  * Clase abstracta que implementa los métodos mas comunes de los servicios.
 */
-public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> implements Service<T> {
+public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends BaseEntityDao<T>> implements BaseEntityService<T> {
 
 	protected  final Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -50,12 +50,12 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 	@Override
 	@Transactional(readOnly = true)
 	public T loadEntityById(Integer id, String[] attributesInitialized) throws BaseException{
-		return loadEntityWithManagedFetchsById(id, ConditionsUtils.createdFetchs(attributesInitialized));
+		return loadEntityById(id, ManagerFetchs.createdFetchs(attributesInitialized));
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public T loadEntityWithManagedFetchsById(Integer id, Set<ManagerFetchs> fetchs)
+	public T loadEntityById(Integer id, Set<ManagerFetchs> fetchs)
 			throws BaseException {
 		return dao.loadEntityById(id, fetchs);
 	}
@@ -72,47 +72,11 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 			Set<ManagerFetchs> fetchs) throws BaseException {
 			return dao.loadEntityByFilters(filters, fetchs);
 	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findById(Integer id) throws BaseException{
-			return dao.loadEntityById(id);
-	}
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findById(Integer id, String[] attributesInitialized) throws BaseException{
-		return findEntityById(id, ConditionsUtils.createdFetchs(attributesInitialized));
-	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findEntityById(Integer id, Set<ManagerFetchs> fetchs)
-			throws BaseException {
-		return dao.loadEntityById(id, fetchs);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException {
-		return dao.loadEntityByFilters(filters);
-	}
-		
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public T findEntityByFilters(List<? extends ConditionEntry> filters,
-			Set<ManagerFetchs> fetchs) throws BaseException {
-			return dao.loadEntityByFilters(filters, fetchs);
-	}
-		
+			
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public T createOrUpdate(T entity, Integer userId) throws BaseException {
-			if(entity != null && userId != null){
+	public T saveOrUpdate(T entity) throws BaseException {
+			if(entity != null){
 				if(entityValidate(entity)){
 					if (entity.getId()==null || entity.getId().equals(0)){
 							dao.save(entity);
@@ -126,6 +90,13 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 			logger.error("Some parameters (entity or userId) are invalid.");
 			throw new BusinessException("invalid.parameters");
 	}
+	
+	@Override
+	@Deprecated
+	@Transactional(rollbackFor=Exception.class)
+	public T createOrUpdate(T entity, Integer userId) throws BaseException {
+			return this.saveOrUpdate(entity);
+	}
 
 	@Transactional
 	protected boolean entityValidate(T entity) throws BaseException {
@@ -137,15 +108,26 @@ public abstract class CommonsService<T extends BaseEntity, U extends Dao<T>> imp
 		return ;
 	}
 	
+	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public void delete(T entity, Integer userId) throws BaseException{
+	public T delete(T object) throws BaseException{
+		if(object==null) 
+			throw new InternalErrorException("invalid.parameters");
+		return dao.delete(object);
+	}
+	
+	@Override
+	@Deprecated
+	@Transactional(rollbackFor=Exception.class)
+	public T delete(T entity, Integer userId) throws BaseException{
 		if(entity!=null && entity.getId()!=null && userId!=null){
-				this.createOrUpdate(entity, userId);
-				entity = loadEntityById(entity.getId());
-				dao.delete(entity);
-			return;
-		}	
+			entity = loadEntityById(entity.getId());
+			dao.delete(entity);
+		} else {
+			throw new BusinessException("invalid.parameters");
+		}
+		return entity;
 	}
 	
 	@Override

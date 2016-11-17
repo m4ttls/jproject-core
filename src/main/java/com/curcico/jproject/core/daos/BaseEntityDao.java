@@ -18,7 +18,7 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
  *
  * @param <T>
  */
-public interface Dao<T extends BaseEntity> {
+public interface BaseEntityDao<T extends BaseEntity> {
 
 	/**
 	 * Busca una entidad por id
@@ -69,7 +69,7 @@ public interface Dao<T extends BaseEntity> {
 	 * @param object
 	 * @throws InternalErrorException
 	 */
-	void save(T object) throws InternalErrorException;
+	T save(T object) throws InternalErrorException;
 
 	/**
 	 * Elimina un objeto en la base de datos (utiliza la sentencia de
@@ -78,15 +78,15 @@ public interface Dao<T extends BaseEntity> {
 	 * @param object
 	 * @throws InternalErrorException
 	 */
-	void delete(T object) throws InternalErrorException;
-
+	T delete(T object) throws InternalErrorException;
+	
 	/**
 	 * Actualiza un objeto en la base de datos
 	 * 
 	 * @param object
 	 * @throws InternalErrorException
 	 */
-	void update(T object) throws InternalErrorException;
+	T update(T object) throws InternalErrorException;
 
 	/**
 	 * Guarda o actualiza un objeto en la base de datos
@@ -94,7 +94,7 @@ public interface Dao<T extends BaseEntity> {
 	 * @param object
 	 * @throws InternalErrorException
 	 */
-	void saveOrUpdate(T object) throws InternalErrorException;
+	T saveOrUpdate(T object) throws InternalErrorException;
 
 	/**
 	 * Total de registros de la tabla (incluye las condiciones definidas en el

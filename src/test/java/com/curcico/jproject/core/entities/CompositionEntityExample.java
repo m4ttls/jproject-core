@@ -4,6 +4,12 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 public class CompositionEntityExample extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	@SuppressWarnings("unused")
+	private static final long serialVersionUID = 1L;
 	
 	private String code;
 	private SimpleEntityExample composition;

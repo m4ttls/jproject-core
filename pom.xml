@@ -42,11 +42,13 @@
 			<id>acurci</id>
 		</developer>
 	</developers>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
 
 	<properties>
 		<spring.version>4.3.2.RELEASE</spring.version>
-		<spring.security.version>4.1.2.RELEASE</spring.security.version>
-		<jdk.version>1.8</jdk.version>
+		<spring.security.version>4.1.3.RELEASE</spring.security.version>
+		<hibernate.version>4.3.11.Final</hibernate.version>
+		<jdk.version>1.7</jdk.version>
 	</properties>
 
 	<distributionManagement>
@@ -141,7 +143,7 @@
 					<goals>deploy</goals>
 				</configuration>
 			</plugin>
-			<!-- Maven Enforcer Plugin -->
+			<!-- Maven Enforcer Plugin 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -163,6 +165,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 		            <groupId>external.atlassian.jgitflow</groupId>
 		            <artifactId>jgitflow-maven-plugin</artifactId>
@@ -214,12 +217,32 @@
 			<version>${spring.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-support</artifactId>
+			<version>2.0.8</version>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
 		<!-- Hibernate -->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>5.2.2.Final</version>
+			<version>${hibernate.version}</version>
+		</dependency>
+
+		<!-- Apache Commons -->
+		<dependency>
+			<groupId>commons-digester</groupId>
+			<artifactId>commons-digester</artifactId>
+			<version>1.8</version>
 		</dependency>
 
 		<dependency>
@@ -227,25 +250,48 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 		<dependency>
-		    <groupId>commons-beanutils</groupId>
-		    <artifactId>commons-beanutils</artifactId>
-		    <version>1.9.2</version>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.7.7</version>
 		</dependency>
+
+ 
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.7.7</version>
+		</dependency>	
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate4</artifactId>
+		    <version>2.7.7</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-annotations</artifactId>
+		    <version>2.7.7</version>
+		</dependency>
+
 		
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-
+ 
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.7</version>
 		</dependency>
+
+
 
 		<!-- Reflections -->
 		<dependency>
@@ -260,13 +306,12 @@
 			<version>1.7.21</version>
 		</dependency>
 
-
-		<!-- TEST -->
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 		    <groupId>junit</groupId>
 		    <artifactId>junit</artifactId>
 		    <version>4.12</version>
-		    <scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -290,6 +335,13 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- /TEST -->
+
+		<!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
+		<dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-swagger2</artifactId>
+		    <version>2.5.0</version>
+		</dependency>
 
 	</dependencies>
 

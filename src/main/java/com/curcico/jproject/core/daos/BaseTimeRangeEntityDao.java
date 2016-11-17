@@ -3,10 +3,10 @@ package com.curcico.jproject.core.daos;
 import java.util.Date;
 import java.util.List;
 
-import com.curcico.jproject.core.entities.TimeRangeEntity;
+import com.curcico.jproject.core.entities.BaseTimeRangeEntity;
 import com.curcico.jproject.core.exception.BaseException;
 
-public interface TimeRangeEntityDao<T extends TimeRangeEntity> extends Dao<T> {
+public interface BaseTimeRangeEntityDao<T extends BaseTimeRangeEntity> extends BaseAuditedEntityDao<T> {
 	
 	/** Retorna una lista de los filtros proporcionados mas los filtros de entidades activas.
 	 * No modifica la lista original.
