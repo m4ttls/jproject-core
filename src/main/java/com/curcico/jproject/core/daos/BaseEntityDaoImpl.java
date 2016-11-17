@@ -24,6 +24,7 @@ import org.hibernate.proxy.LazyInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.exception.BaseException;
@@ -31,7 +32,7 @@ import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.utils.ConditionsUtils;
 import com.curcico.jproject.core.wrapper.GridWrapper;
 
-public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
+public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEntityDao<T> {
 
 	Logger logger = LoggerFactory.getLogger(getClass());
 	protected final Class<T> typeParameterClass;
@@ -41,14 +42,9 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	
 	
     @SuppressWarnings("unchecked")
-	public CommonDao() {
+	public BaseEntityDaoImpl() {
         ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
         this.typeParameterClass = (Class<T>)type.getActualTypeArguments()[0];
-    }
-	
-    @Deprecated
-    public CommonDao(Class<T> typeParameterClass) {
-        this.typeParameterClass = typeParameterClass;
     }
 
 	@Override
@@ -81,9 +77,7 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	public Long countByFilters(List<? extends ConditionEntry> filters) throws InternalErrorException {
 		try {
 			Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
-			setFilters(criteria, filters, null);
-			criteria.setProjection(Projections.countDistinct("id"));
-			return (Long) criteria.uniqueResult();
+			return countByFilters(criteria, filters);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new InternalErrorException(e);
@@ -93,6 +87,9 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	@Override
 	public Long countByFilters(Criteria criteria, List<? extends ConditionEntry> filters) throws InternalErrorException {
 		try {
+			List<ConditionEntry> conditions = new ArrayList<>();
+			if(filters!=null)
+				conditions.addAll(filters);
 			setFilters(criteria, filters, null);
 			criteria.setProjection(Projections.countDistinct("id"));
 			return (Long) criteria.uniqueResult();
@@ -124,6 +121,9 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 						Integer page, Integer rows, String orderBy, String orderMode, Set<ManagerFetchs> fetchs) throws InternalErrorException {
 		try {
 			
+			List<ConditionEntry> conditions = new ArrayList<>();
+			if(filters!=null)
+				conditions.addAll(filters);
 			setFilters(criteria, filters, fetchs);
 			if(page!=null && page > 0 && rows!=null && rows > 0){
 				criteria.setMaxResults(rows);
@@ -211,30 +211,40 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	}
 	
 	@Override
-	public void save(T object) throws InternalErrorException{
+	public T save(T object) throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().save(object);
 		object.setVersion(object.getVersion()+1);
+		return object;
 	}
 
 	@Override
-	public void delete(T object)  throws InternalErrorException{
-		this.sessionFactory.getCurrentSession().delete(object);
-		object.setVersion(object.getVersion()+1);
+	public T delete(T object)  throws InternalErrorException{
+		/* Hago las validaciones por si me sobreescriben el delete con la anotación de hibernate */
+		if(object.getVersion()==null) throw new InternalErrorException("falta.parametro.version");
+		T entity = loadEntityById(object.getId());
+		if(!entity.getVersion().equals(object.getVersion()))
+				throw new InternalErrorException("concurrent.access.exception");
+		this.sessionFactory.getCurrentSession().delete(entity);
+		entity.setVersion(object.getVersion()+1);
+		return entity;
 	}
 
-	public void update(T object)  throws InternalErrorException{
+	@Override
+	public T update(T object)  throws InternalErrorException{
 		this.sessionFactory.getCurrentSession().merge(object);
 		object.setVersion(object.getVersion()+1);
+		return object;
 	}
 
 	@Override
-	public void saveOrUpdate(T object) throws InternalErrorException {
+	public T saveOrUpdate(T object) throws InternalErrorException {
 		try {
 			this.sessionFactory.getCurrentSession().saveOrUpdate(object);
 			object.setVersion(object.getVersion()+1);
 		} catch (Exception e) {
 			throw new InternalErrorException(e);
 		}
+		return object;
 	}
 
 	@Override
@@ -250,12 +260,14 @@ public abstract class CommonDao<T extends BaseEntity> implements Dao<T> {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public T loadEntityByFilters(List<? extends ConditionEntry> filters)  throws InternalErrorException{
 		return loadEntityByFilters(filters, null);
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public T loadEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws InternalErrorException{			
 			Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
 			Set<ManagerFetchs> fetchUnloaded = setFilters(criteria, filters, fetchs);

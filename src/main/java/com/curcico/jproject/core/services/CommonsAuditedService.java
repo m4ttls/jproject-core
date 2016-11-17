@@ -3,9 +3,10 @@ package com.curcico.jproject.core.services;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.curcico.jproject.core.daos.Dao;
+import com.curcico.jproject.core.daos.BaseEntityDao;
 import com.curcico.jproject.core.entities.BaseAuditedEntity;
 import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.BusinessException;
@@ -15,7 +16,10 @@ import com.curcico.jproject.core.exception.BusinessException;
  * Clase abstracta que implementa los métodos mas comunes de los servicios considerando 
  * la actualización de los campos de auditoría.
 */
-public abstract class CommonsAuditedService<T extends BaseAuditedEntity, U extends Dao<T>> extends CommonsService<T, U>{
+@Deprecated
+public abstract class CommonsAuditedService<T extends BaseAuditedEntity, U extends BaseEntityDao<T>> extends BaseEntityServiceImpl<T, U>{
+
+	protected  final Logger logger = Logger.getLogger(getClass());
 	
 	@Transactional(rollbackFor=Exception.class)
 	public T createOrUpdate(T entity, Integer userId) throws BaseException {
@@ -47,12 +51,17 @@ public abstract class CommonsAuditedService<T extends BaseAuditedEntity, U exten
 
 
 	@Transactional(rollbackFor=Exception.class)
-	public void delete(T entity, Integer userId) throws BaseException{
+	public T delete(T entity, Integer userId) throws BaseException{
 		if(entity!=null && entity.getId()!=null && userId!=null){
 			entity = loadEntityById(entity.getId());
-			dao.delete(entity);
+			Timestamp now = new Timestamp(Calendar.getInstance().getTimeInMillis());
+			entity.setUpdatedByUser(userId);
+			entity.setUpdatedTime(now);
+			entity.setDeleted("1");
+			entity = dao.update(entity);
 		} else {
 			throw new BusinessException("invalid.parameters");
-		}	
+		}
+		return entity;
 	}
 }

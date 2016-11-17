@@ -8,7 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 
 @Entity(name="TEST_VTR_ENTITY")
-public class OneVersionedTimeRangeEntity extends TimeRangeEntity {
+public class OneVersionedTimeRangeEntity extends BaseTimeRangeEntity {
+
+	@SuppressWarnings("unused")
+	private static final long serialVersionUID = -6770678021712829066L;
 
 	private String descripcion;
 	

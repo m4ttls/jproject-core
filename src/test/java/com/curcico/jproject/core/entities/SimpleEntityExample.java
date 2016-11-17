@@ -2,6 +2,11 @@ package com.curcico.jproject.core.entities;
 
 public class SimpleEntityExample extends BaseEntity {
 
+	/**
+	 * 
+	 */
+	@SuppressWarnings("unused")
+	private static final long serialVersionUID = 1L;
 	private String code;
 	
 	public SimpleEntityExample() {

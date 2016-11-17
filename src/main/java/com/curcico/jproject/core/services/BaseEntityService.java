@@ -19,7 +19,7 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
  *  por lo tanto, todo método declarado aquí debe ser implementado en dicha clase (o por lo menos declarado para que las clases hijas
  *  lo implementen)
  * */
-public interface Service<T extends BaseEntity> {
+public interface BaseEntityService<T extends BaseEntity> {
 
 	/**
 	 * @param object
@@ -27,15 +27,31 @@ public interface Service<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
+	@Deprecated
 	T createOrUpdate(T object, Integer userId) throws BaseException;
+	
+	/**
+	 * @param entity
+	 * @param userId
+	 * @return
+	 * @throws BaseException
+	 */
+	@Deprecated
+	T delete(T entity, Integer userId) throws BaseException;
+
+	/**
+	 * @param entity
+	 * @return
+	 * @throws BaseException
+	 */
+	T saveOrUpdate(T entity) throws BaseException;
 
 	/**
 	 * @param object
-	 * @param userId
 	 * @throws BaseException
 	 */
-	void delete(T object, Integer userId) throws BaseException;
-
+	T delete(T object) throws BaseException;
+	
 	/**
 	 * @param id
 	 * @return
@@ -57,7 +73,7 @@ public interface Service<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	T loadEntityWithManagedFetchsById(Integer id, Set<ManagerFetchs> fetchs) throws BaseException;
+	T loadEntityById(Integer id, Set<ManagerFetchs> fetchs) throws BaseException;
 	
 	/**
 	 * @param filters
@@ -74,50 +90,6 @@ public interface Service<T extends BaseEntity> {
 	 */
 	T loadEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws BaseException;
 
-
-	/**
-	 * @param id
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated
-	T findById(Integer id) throws BaseException;
-	
-	/**
-	 * @param id
-	 * @param attributesInitialized
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated
-	T findById(Integer id, String[] attributesInitialized) throws BaseException;
-	
-	/**
-	 * @param id
-	 * @param fetchs
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated
-	T findEntityById(Integer id, Set<ManagerFetchs> fetchs) throws BaseException;
-	
-	/**
-	 * @param filters
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated	
-	T findEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException;
-	
-	/**
-	 * @param filters
-	 * @param fetchs
-	 * @return
-	 * @throws BaseException
-	 */
-	@Deprecated	
-	T findEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws BaseException;
-	
 	/**
 	 * @return
 	 * @throws BaseException
