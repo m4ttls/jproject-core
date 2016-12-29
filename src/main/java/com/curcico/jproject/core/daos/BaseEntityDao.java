@@ -10,11 +10,10 @@ import org.hibernate.SessionFactory;
 
 import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.exception.BaseException;
-import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.wrapper.GridWrapper;
 
 /**
- * @author alejandro
+ * @author Ing. Alejandro Daniel Curci (acurci@gmail.com)
  *
  * @param <T>
  */
@@ -25,9 +24,9 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * 
 	 * @param id
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	T loadEntityById(Integer id) throws InternalErrorException;
+	T loadEntityById(Integer id) throws BaseException;
 
 	/**
 	 * Busca una entidad por id
@@ -35,10 +34,10 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @param id
 	 * @param fetchs
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	T loadEntityById(Integer id, Set<ManagerFetchs> fetchs)
-			throws InternalErrorException;
+			throws BaseException;
 
 	/**
 	 * Busca una unica entidad en base a filtros, arroja un DaoException si se
@@ -46,10 +45,10 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * 
 	 * @param filters
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	T loadEntityByFilters(List<? extends ConditionEntry> filters)
-			throws InternalErrorException;
+	T loadEntityByFilters(List<ConditionEntry> filters)
+			throws BaseException;
 
 	/**
 	 * Busca una unica entidad en base a filtros, arroja un DaoException si se
@@ -58,61 +57,61 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @param filters
 	 * @param fetchs
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	T loadEntityByFilters(List<? extends ConditionEntry> filters,
-			Set<ManagerFetchs> fetchs) throws InternalErrorException;
+	T loadEntityByFilters(List<ConditionEntry> filters,
+			Set<ManagerFetchs> fetchs) throws BaseException;
 
 	/**
 	 * Guarda un objeto en la base de datos
 	 * 
 	 * @param object
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	T save(T object) throws InternalErrorException;
+	T save(T object) throws BaseException;
 
 	/**
 	 * Elimina un objeto en la base de datos (utiliza la sentencia de
 	 * eliminación definia para la entidad)
 	 * 
 	 * @param object
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	T delete(T object) throws InternalErrorException;
+	T delete(T object) throws BaseException;
 	
 	/**
 	 * Actualiza un objeto en la base de datos
 	 * 
 	 * @param object
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	T update(T object) throws InternalErrorException;
+	T update(T object) throws BaseException;
 
 	/**
 	 * Guarda o actualiza un objeto en la base de datos
 	 * 
 	 * @param object
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	T saveOrUpdate(T object) throws InternalErrorException;
+	T saveOrUpdate(T object) throws BaseException;
 
 	/**
 	 * Total de registros de la tabla (incluye las condiciones definidas en el
 	 * annotation where de hibernate)
 	 * 
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	Integer count() throws InternalErrorException;
+	Long count() throws BaseException;
 
 	/**
 	 * Devuelve el total de registros de la tabla (incluye las condiciones
 	 * definidas en el annotation where de hibernate)
 	 * 
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	Collection<? extends T> findAll() throws InternalErrorException;
+	Collection<? extends T> findAll() throws BaseException;
 
 	/**
 	 * Devuelve la pagina seleccionada del total de registros de la tabla
@@ -122,10 +121,10 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 *            (primera pagina = 1)
 	 * @param tamanioPagina
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	Collection<? extends T> findAll(Integer numeroDePagina,
-			Integer tamanioPagina) throws InternalErrorException;
+			Integer tamanioPagina) throws BaseException;
 
 	/**
 	 * Devuelve el total de registros de la tabla ordenado (incluye las
@@ -134,10 +133,10 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @param orderBy
 	 * @param orderMode
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	Collection<? extends T> findAll(String orderBy, String orderMode)
-			throws InternalErrorException;
+			throws BaseException;
 
 	/**
 	 * Devuelve el total de registros de la tabla ordenado y paginado (incluye
@@ -149,29 +148,29 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @param orderBy
 	 * @param orderMode
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	Collection<? extends T> findAll(Integer numeroDePagina,
 			Integer tamanioPagina, String orderBy, String orderMode)
-			throws InternalErrorException;
+			throws BaseException;
 
 	/**
 	 * Lista de Ids
 	 * 
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	List<Integer> getIds() throws InternalErrorException;
+	List<Integer> getIds() throws BaseException;
 
 	/**
 	 * Cantidad de registros que cumplen las condiciones
 	 * 
 	 * @param conditions
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	Long countByFilters(List<? extends ConditionEntry> conditions)
-			throws InternalErrorException;
+	Long countByFilters(List<ConditionEntry> conditions)
+			throws BaseException;
 
 	/**
 	 * Cantidad de registros que cumplen las condiciones (CUIDADO! el método
@@ -181,22 +180,22 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @param criteria
 	 * @param filters
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	Long countByFilters(Criteria criteria,
-			List<? extends ConditionEntry> filters)
-			throws InternalErrorException;
+			List<ConditionEntry> filters)
+			throws BaseException;
 
 	/**
 	 * Busqueda de entidades con condiciones
 	 * 
 	 * @param conditions
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	Collection<? extends T> findByFilters(
-			List<? extends ConditionEntry> conditions)
-			throws InternalErrorException;
+			List<ConditionEntry> conditions)
+			throws BaseException;
 
 	/**
 	 * Busqueda de entidades con condiciones
@@ -204,11 +203,11 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @param filters
 	 * @param fetchs
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	Collection<? extends T> findByFilters(
-			List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)
-			throws InternalErrorException;
+			List<ConditionEntry> filters, Set<ManagerFetchs> fetchs)
+			throws BaseException;
 
 	/**
 	 * Busqueda de entidades paginada con ordenamiento y condiciones
@@ -220,12 +219,12 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @param orderBy
 	 * @param orderMode
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	Collection<? extends T> findByFilters(
-			List<? extends ConditionEntry> conditions, Integer numeroDePagina,
+			List<ConditionEntry> conditions, Integer numeroDePagina,
 			Integer tamanioPagina, String orderBy, String orderMode,
-			Set<ManagerFetchs> fetchs) throws InternalErrorException;
+			Set<ManagerFetchs> fetchs) throws BaseException;
 
 	/**
 	 * Busqueda de entidades paginada con ordenamiento y condiciones
@@ -238,12 +237,12 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @param orderMode
 	 * @param fetchs
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
 	Collection<? extends T> findByFilters(Criteria criteria,
-			List<? extends ConditionEntry> filters, Integer page, Integer rows,
+			List<ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode, Set<ManagerFetchs> fetchs)
-			throws InternalErrorException;
+			throws BaseException;
 
 	/**
 	 * Busqueda de entidades paginada con ordenamiento y condiciones, retorna el
@@ -259,7 +258,7 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * @throws BaseException
 	 */
 	GridWrapper<? extends T> findByFiltersGridWrapper(
-			List<? extends ConditionEntry> filters, Integer page, Integer rows,
+			List<ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode, Set<ManagerFetchs> fetchs)
 			throws BaseException;
 
@@ -302,9 +301,9 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * Devuelve un criteria sin restricciones para la entidad T
 	 * 
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	Criteria getCriteria() throws InternalErrorException;
+	Criteria getCriteria() throws BaseException;
 
 	/**
 	 * Devuelve un criteria sin restricciones para la entidad T con el alias
@@ -312,8 +311,8 @@ public interface BaseEntityDao<T extends BaseEntity> {
 	 * 
 	 * @param alias
 	 * @return
-	 * @throws InternalErrorException
+	 * @throws BaseException
 	 */
-	Criteria getCriteria(String alias) throws InternalErrorException;
+	Criteria getCriteria(String alias) throws BaseException;
 
 }

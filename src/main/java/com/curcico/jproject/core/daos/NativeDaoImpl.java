@@ -25,7 +25,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,8 +39,7 @@ import com.google.gson.JsonObject;
  * @author acurci
  *
  */
-@Repository
-public class NativeDaoImpl {
+public abstract class NativeDaoImpl {
 
 	protected Logger logger = Logger.getLogger(getClass());
 	
@@ -66,10 +64,13 @@ public class NativeDaoImpl {
 								) throws BaseException {
 		try {
 			if(parameters==null) parameters = new HashMap<String, Object>();
-			String queryBase = "SELECT COUNT(1) FROM (" + getQueryBase (queryStr, conditions, parameters) + ")";
+			Map<String, Object> parametrosInternos = new HashMap<String, Object>();
+			if(parameters!=null) 
+				parametrosInternos.putAll(parameters);
+			String queryBase = "SELECT COUNT(1) FROM (" + getQueryBase (queryStr, conditions, parametrosInternos) + ")";
 			SQLQuery q = sessionFactory.getCurrentSession().createSQLQuery(queryBase);
-			setParameters(q, parameters);
-			return ((BigInteger) q.uniqueResult()).longValue();
+			setParameters(q, parametrosInternos);
+			return ((Number) q.uniqueResult()).longValue();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new InternalErrorException(e);
@@ -176,7 +177,7 @@ public class NativeDaoImpl {
 						Element e = doc.createElement(columna);
 						if(columnas.get(columna)!=null){
 							Class<?> c = (columnas.get(columna)).getClass();
-							if 		(c==BigDecimal.class) 	e.appendChild(doc.createTextNode(((BigDecimal) columnas.get(columna)).toString()));
+							if 		(c==BigDecimal.class) 	e.appendChild(doc.createTextNode(((Number) columnas.get(columna)).toString()));
 							else if (c==String.class) 		e.appendChild(doc.createTextNode((String) columnas.get(columna)));
 							else if (c==Timestamp.class) 	e.appendChild(doc.createTextNode(df.format((Timestamp) columnas.get(columna))));
 						}
@@ -276,6 +277,7 @@ public class NativeDaoImpl {
 			if(Integer.class.isInstance(value)) 	q.setInteger(	p, 	(Integer) value);
 			if(Long.class.isInstance(value)) 		q.setLong(		p, 	(Long) value);
 			if(Date.class.isInstance(value)) 		q.setDate(		p, 	(Date) value);
+			if(BigInteger.class.isInstance(value)) 	q.setBigInteger(p, 	(BigInteger) value);
 			if(BigDecimal.class.isInstance(value)) 	q.setBigDecimal(p, 	(BigDecimal) value);
 			if(Boolean.class.isInstance(value)) 	q.setBoolean(	p, 	(Boolean) value);
 			if(Float.class.isInstance(value)) 		q.setFloat(		p, 	(Float) value);

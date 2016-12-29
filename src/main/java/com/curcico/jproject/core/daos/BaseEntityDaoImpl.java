@@ -18,6 +18,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import org.hibernate.StaleObjectStateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.proxy.HibernateProxy;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.exception.BaseException;
+import com.curcico.jproject.core.exception.ConcurrentAccessException;
 import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.utils.ConditionsUtils;
 import com.curcico.jproject.core.wrapper.GridWrapper;
@@ -34,90 +36,107 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
 public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEntityDao<T> {
 
 	protected Logger logger = Logger.getLogger(getClass());
+
+
+
 	protected final Class<T> typeParameterClass;
-	
-	@Autowired
+
+    	@Autowired
 	protected SessionFactory sessionFactory;
 	
-	
-    @SuppressWarnings("unchecked")
+
 	public BaseEntityDaoImpl() {
-        ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
-        this.typeParameterClass = (Class<T>)type.getActualTypeArguments()[0];
+        	ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+        	this.typeParameterClass = (Class<T>)type.getActualTypeArguments()[0];
+	}
+
+    private static Class<?> findTypeParameterClass(Class<?> clase){
+    	if(ParameterizedType.class.isAssignableFrom(clase.getGenericSuperclass().getClass())){
+    		ParameterizedType type = (ParameterizedType) clase.getGenericSuperclass();
+    		return (Class<?>)type.getActualTypeArguments()[0];
+    	} else {
+    		return findTypeParameterClass(clase.getSuperclass());
+    	}
     }
 
+   
 	@Override
-	public Collection<? extends T> findAll() throws InternalErrorException {
+    @Transactional
+	public Long count() throws BaseException {
+		return countByFilters(null);
+	}
+
+	@Override
+    @Transactional
+	public Long countByFilters(List<ConditionEntry> conditions) throws BaseException {
+		Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
+		return countByFilters(criteria, conditions);
+	}
+
+	@Override
+	@Transactional
+	public Long countByFilters(Criteria criteria, List<ConditionEntry> conditions) throws BaseException {
+		try {
+			List<ConditionEntry> filters = null;
+			if(conditions!=null){
+				filters = new ArrayList<>();
+				filters.addAll(conditions);
+			}
+			setFilters(criteria, filters, null);
+			criteria.setProjection(null)
+					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+					.setProjection(Projections.rowCount());
+			return (Long) criteria.uniqueResult();
+		} catch (StaleObjectStateException e) {
+			logger.error(e.getMessage(), e);
+			throw new ConcurrentAccessException(e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new InternalErrorException(e);
+		}
+	}
+	
+	@Override
+	public Collection<? extends T> findAll() throws BaseException {
 		return this.findAll(null, null, null, null);
 	}
 
 	@Override
-	public Collection<? extends T> findAll(Integer numeroDePagina, Integer tamanioPagina) throws InternalErrorException{
+	public Collection<? extends T> findAll(Integer numeroDePagina, Integer tamanioPagina) throws BaseException{
 		return this.findAll(numeroDePagina, tamanioPagina, null, null);
 	}
 
 	@Override
-	public Collection<? extends T> findAll(String orderBy, String orderMode) throws InternalErrorException{
+	public Collection<? extends T> findAll(String orderBy, String orderMode) throws BaseException{
 		return this.findAll(null, null, orderBy, orderMode);
 	}
 
 	@Override
 	public Collection<? extends T> findAll(Integer page, Integer rows, String orderBy, String orderMode) 
-			throws InternalErrorException{
+			throws BaseException{
 		return findByFilters(null, page, rows, orderBy, orderMode, null);
 	}
 
 	@Override
-	public Integer count() throws InternalErrorException {
-		return (Integer)this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass).setProjection(Projections.rowCount()).uniqueResult();
-	}
-	
-	@Override
-	public Long countByFilters(List<? extends ConditionEntry> filters) throws InternalErrorException {
-		try {
-			Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
-			return countByFilters(criteria, filters);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new InternalErrorException(e);
-		}
-	}
-	
-	@Override
-	public Long countByFilters(Criteria criteria, List<? extends ConditionEntry> filters) throws InternalErrorException {
-		try {
-			List<ConditionEntry> conditions = new ArrayList<>();
-			if(filters!=null)
-				conditions.addAll(filters);
-			setFilters(criteria, filters, null);
-			criteria.setProjection(Projections.countDistinct("id"));
-			return (Long) criteria.uniqueResult();
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new InternalErrorException(e);
-		}
-	}
-	
-	@Override
-	public Collection<? extends T> findByFilters(List<? extends ConditionEntry> filters) throws InternalErrorException {
+	public Collection<? extends T> findByFilters(List<ConditionEntry> filters) throws BaseException {
 		return findByFilters(filters, null);
 	}
 	
 	@Override
-	public Collection<? extends T> findByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs) throws InternalErrorException {
+	public Collection<? extends T> findByFilters(List<ConditionEntry> filters, Set<ManagerFetchs> fetchs) throws BaseException {
 		return findByFilters(filters, null, null, null, null, fetchs);
 	}
 
 	@Override
-	public Collection<? extends T> findByFilters(List<? extends ConditionEntry> filters, 
-						Integer page, Integer rows, String orderBy, String orderMode, Set<ManagerFetchs> fetchs) throws InternalErrorException {
+	public Collection<? extends T> findByFilters(List<ConditionEntry> filters, 
+						Integer page, Integer rows, String orderBy, String orderMode, Set<ManagerFetchs> fetchs) throws BaseException {
 		return findByFilters(getCriteria(), filters, page, rows, orderBy, orderMode, fetchs);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Collection<? extends T> findByFilters(Criteria criteria, List<? extends ConditionEntry> filters, 
-						Integer page, Integer rows, String orderBy, String orderMode, Set<ManagerFetchs> fetchs) throws InternalErrorException {
+	public Collection<? extends T> findByFilters(Criteria criteria, List<ConditionEntry> filters, 
+						Integer page, Integer rows, String orderBy, String orderMode, Set<ManagerFetchs> fetchs) throws BaseException {
 		try {
 			
 			List<ConditionEntry> conditions = new ArrayList<>();
@@ -150,7 +169,7 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public GridWrapper<? extends T> findByFiltersGridWrapper(List<? extends ConditionEntry> filters, 
+	public GridWrapper<? extends T> findByFiltersGridWrapper(List<ConditionEntry> filters, 
 			Integer page, Integer rows, 
 			String orderBy, String orderMode,
 			Set<ManagerFetchs> fetchs) throws BaseException {
@@ -160,12 +179,12 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	}
 	
 	@Override
-	public Criteria getCriteria() throws InternalErrorException {
+	public Criteria getCriteria() throws BaseException {
 		 return this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
 	}
 	
 	@Override
-	public Criteria getCriteria(String alias) throws InternalErrorException {
+	public Criteria getCriteria(String alias) throws BaseException {
 		return this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass, alias);
 	}
 	
@@ -173,10 +192,10 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	/**
 	 * @param criteria
 	 * @param filters
-	 * @throws InternalErrorException 
+	 * @throws BaseException 
 	 */
-	protected Set<ManagerFetchs> setFilters(Criteria criteria, List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs) 
-			throws InternalErrorException {
+	protected Set<ManagerFetchs> setFilters(Criteria criteria, List<ConditionEntry> filters, Set<ManagerFetchs> fetchs) 
+			throws BaseException {
 		Map<String, String> translations = new HashMap<String, String>();
 		Set<ManagerFetchs> result = null;
 		Set<ManagerAlias> alias = getAlias();
@@ -210,14 +229,14 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	}
 	
 	@Override
-	public T save(T object) throws InternalErrorException{
+	public T save(T object) throws BaseException{
 		this.sessionFactory.getCurrentSession().save(object);
 		object.setVersion(object.getVersion()+1);
 		return object;
 	}
 
 	@Override
-	public T delete(T object)  throws InternalErrorException{
+	public T delete(T object)  throws BaseException{
 		/* Hago las validaciones por si me sobreescriben el delete con la anotación de hibernate */
 		if(object.getVersion()==null) throw new InternalErrorException("falta.parametro.version");
 		T entity = loadEntityById(object.getId());
@@ -229,14 +248,14 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	}
 
 	@Override
-	public T update(T object)  throws InternalErrorException{
+	public T update(T object)  throws BaseException{
 		this.sessionFactory.getCurrentSession().merge(object);
 		object.setVersion(object.getVersion()+1);
 		return object;
 	}
 
 	@Override
-	public T saveOrUpdate(T object) throws InternalErrorException {
+	public T saveOrUpdate(T object) throws BaseException {
 		try {
 			this.sessionFactory.getCurrentSession().saveOrUpdate(object);
 			object.setVersion(object.getVersion()+1);
@@ -247,27 +266,27 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	}
 
 	@Override
-	public T loadEntityById(Integer id)  throws InternalErrorException {
+	public T loadEntityById(Integer id)  throws BaseException {
 		return loadEntityById(id, null);
 	}
 	
 	@Override
-	public T loadEntityById(Integer id, Set<ManagerFetchs> fetchs)  throws InternalErrorException{
-		List<ConditionSimple> filters = new ArrayList<ConditionSimple>();
+	public T loadEntityById(Integer id, Set<ManagerFetchs> fetchs)  throws BaseException{
+		List<ConditionEntry> filters = new ArrayList<ConditionEntry>();
 		filters.add(new ConditionSimple("id", SearchOption.EQUAL, id));
 		return loadEntityByFilters(filters, fetchs);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public T loadEntityByFilters(List<? extends ConditionEntry> filters)  throws InternalErrorException{
+	public T loadEntityByFilters(List<ConditionEntry> filters)  throws BaseException{
 		return loadEntityByFilters(filters, null);
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public T loadEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws InternalErrorException{			
+	public T loadEntityByFilters(List<ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws BaseException{			
 			Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
 			Set<ManagerFetchs> fetchUnloaded = setFilters(criteria, filters, fetchs);
 			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -283,7 +302,7 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Integer> getIds() throws InternalErrorException{
+	public List<Integer> getIds() throws BaseException{
         Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
         criteria.setProjection(Projections.property("id"));
         return (List<Integer>) criteria.list();
@@ -347,12 +366,12 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 		return result;
 	}
 
-	/**
-	 * @param criteria
-	 * @param conditions
-	 * @throws InternalErrorException 
+	/** Inicializa las colecciones solicitadas en el listado de fetchs
+	 * @param object
+	 * @param fetchs
+	 * @throws BaseException
 	 */
-	protected void initializeCollectionsFetch(T object, Set<ManagerFetchs> fetchUnloaded) throws InternalErrorException {
+	protected void initializeCollectionsFetch(T object, Set<ManagerFetchs> fetchUnloaded) throws BaseException {
 		if(fetchUnloaded !=null ){
 			for (ManagerFetchs fetch : fetchUnloaded) {
 				PropertyUtilsBean beanUtil = new PropertyUtilsBean();

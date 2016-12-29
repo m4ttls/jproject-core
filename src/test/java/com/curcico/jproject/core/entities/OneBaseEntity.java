@@ -16,14 +16,14 @@ import org.hibernate.annotations.Where;
 @Entity(name="TEST_VERSIONED_ENTITY")
 @SQLDelete(sql="UPDATE TEST_VERSIONED_ENTITY SET deleted='1', version=version+1 WHERE id=? and version=?")
 @Where(clause="deleted is null")
-public class OneVersionedEntity extends BaseEntity {
+public class OneBaseEntity extends BaseEntity {
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 4734579835587049632L;
 
 	private String descripcion;
 	
-	private OneVersionedTimeRangeEntity vtr;
+	private OneBaseTimeRangeEntity vtr;
 	
 	@Override
 	@Id
@@ -44,11 +44,11 @@ public class OneVersionedEntity extends BaseEntity {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="ONE_VTR")
-	public OneVersionedTimeRangeEntity getVtr() {
+	public OneBaseTimeRangeEntity getVtr() {
 		return vtr;
 	}
 	
-	public void setVtr(OneVersionedTimeRangeEntity vtr) {
+	public void setVtr(OneBaseTimeRangeEntity vtr) {
 		this.vtr = vtr;
 	}
 	

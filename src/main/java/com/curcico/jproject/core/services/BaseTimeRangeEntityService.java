@@ -7,7 +7,7 @@ import com.curcico.jproject.core.daos.ConditionEntry;
 import com.curcico.jproject.core.entities.BaseTimeRangeEntity;
 import com.curcico.jproject.core.exception.BaseException;
 
-public interface TimeRangeEntityService<T extends BaseTimeRangeEntity> 
+public interface BaseTimeRangeEntityService<T extends BaseTimeRangeEntity> 
 			extends BaseEntityService<T> {
 	
 	/** Retorna una lista de los filtros proporcionados mas los filtros de entidades activas.

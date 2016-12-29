@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 import com.curcico.jproject.core.entities.BaseAuditedEntity;
+import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.InternalErrorException;
 
 public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity> 
@@ -16,7 +17,7 @@ public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity>
     }
 
 	@Override
-	public T update(T object, Integer user) throws InternalErrorException {
+	public T update(T object, Integer user) throws BaseException {
 		if(user==null) 
 			throw new InternalErrorException("falta.parametro.usuario");
 		if(object.getVersion()==null) 
@@ -28,7 +29,7 @@ public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity>
 	}
 
 	@Override
-	public T save(T object, Integer user) throws InternalErrorException {
+	public T save(T object, Integer user) throws BaseException {
 		if(user==null) 
 			throw new InternalErrorException("falta.parametro.usuario");
 		Timestamp now = new Timestamp(Calendar.getInstance().getTimeInMillis());
@@ -40,7 +41,7 @@ public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity>
 	}
 
 	@Override
-	public T saveOrUpdate(T object, Integer user) throws InternalErrorException {
+	public T saveOrUpdate(T object, Integer user) throws BaseException {
 		if(object.getId()!=null){
 			return this.update(object, user);
 		} else {
@@ -49,7 +50,7 @@ public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity>
 	}
 
 	@Override
-	public T delete(T object, Integer user) throws InternalErrorException {
+	public T delete(T object, Integer user) throws BaseException {
 		/* Hago las validaciones por si me sobreescriben el delete con la anotación de hibernate */
 		if(object.getVersion()==null) throw new InternalErrorException("falta.parametro.version");
 		if(user==null) throw new InternalErrorException("falta.parametro.usuario");
@@ -62,25 +63,25 @@ public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity>
 	
 	@Override
 	@Deprecated
-	public T delete(T object) throws InternalErrorException {
+	public T delete(T object) throws BaseException {
 		throw new UnsupportedOperationException("not supported");
 	}
 	
 	@Override
 	@Deprecated
-	public T update(T object) throws InternalErrorException {
+	public T update(T object) throws BaseException {
 		throw new UnsupportedOperationException("not supported");
 	}
 	
 	@Override
 	@Deprecated
-	public T save(T object) throws InternalErrorException {
+	public T save(T object) throws BaseException {
 		throw new UnsupportedOperationException("not supported");
 	}
 	
 	@Override
 	@Deprecated
-	public T saveOrUpdate(T object) throws InternalErrorException {
+	public T saveOrUpdate(T object) throws BaseException {
 		throw new UnsupportedOperationException("not supported");
 	}
 

@@ -8,9 +8,9 @@ import com.curcico.jproject.core.daos.ConditionEntry;
 import com.curcico.jproject.core.entities.BaseTimeRangeEntity;
 import com.curcico.jproject.core.exception.BaseException;
 
-public abstract class TimeRangeEntityServiceImpl<T extends BaseTimeRangeEntity, U extends BaseTimeRangeEntityDao<T>>
+public abstract class BaseTimeRangeEntityServiceImpl<T extends BaseTimeRangeEntity, U extends BaseTimeRangeEntityDao<T>>
 		extends BaseEntityServiceImpl<T, U> 
-		implements TimeRangeEntityService<T> {
+		implements BaseTimeRangeEntityService<T> {
 	
 	@Override
 	public List<ConditionEntry> addFiltersActive(List<ConditionEntry> filters) throws BaseException{

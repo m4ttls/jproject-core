@@ -82,12 +82,6 @@ public class ConditionComplex extends ConditionEntry {
 		}
 	}
 
-	/**
-	 * @return retorna la lista de condiciones
-	 */
-	public List<ConditionEntry> getConditions() {
-		return conditions;
-	}
 
 	/** 
 	 * @return retorna el operador (AND u OR) que agrupa las condiciones
@@ -95,6 +89,28 @@ public class ConditionComplex extends ConditionEntry {
 	public Operator getOperator() {
 		return operator;
 	}
+
+	/**
+	 * @param operator the operator to set
+	 */
+	public void setOperator(Operator operator) {
+		this.operator = operator;
+	}
+
+	/**
+	 * @return retorna la lista de condiciones
+	 */
+	public List<ConditionEntry> getConditions() {
+		return conditions;
+	}
+
+	/**
+	 * @param conditions the conditions to set
+	 */
+	public void setConditions(List<ConditionEntry> conditions) {
+		this.conditions = conditions;
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see com.curcico.jproject.core.daos.ConditionEntry#resolveNativeQuery(java.util.Map)

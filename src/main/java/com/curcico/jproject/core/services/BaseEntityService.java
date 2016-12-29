@@ -15,7 +15,9 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
 
 
 
-/** Interface que indica los metodos base para cada entidad, esta interfaz esta implementada en la clase abstracta CommonsService<T>
+/** 
+ * @author Ing. Alejandro Daniel Curci (acurci@gmail.com)
+ * Interface que indica los metodos base para cada entidad, esta interfaz esta implementada en la clase abstracta CommonsService<T>
  *  por lo tanto, todo método declarado aquí debe ser implementado en dicha clase (o por lo menos declarado para que las clases hijas
  *  lo implementen)
  * */
@@ -80,7 +82,7 @@ public interface BaseEntityService<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	T loadEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException;
+	T loadEntityByFilters(List<ConditionEntry> filters) throws BaseException;
 	
 	/**
 	 * @param filters
@@ -88,7 +90,7 @@ public interface BaseEntityService<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	T loadEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws BaseException;
+	T loadEntityByFilters(List<ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws BaseException;
 
 	/**
 	 * @return
@@ -101,7 +103,7 @@ public interface BaseEntityService<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	Long getCountByFilters(List<? extends ConditionEntry> filters) throws BaseException;
+	Long getCountByFilters(List<ConditionEntry> filters) throws BaseException;
 	
 	/**
 	 * @param filters
@@ -112,7 +114,7 @@ public interface BaseEntityService<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	Collection<T> findByFilters(List<? extends ConditionEntry> filters, Integer page, Integer rows,
+	Collection<T> findByFilters(List<ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode) throws BaseException;
 	
 	/** No es recomendable que al servicio se le envíe la criteria armada... en breve se quitará este método.
@@ -127,7 +129,7 @@ public interface BaseEntityService<T extends BaseEntity> {
 	 * @throws BaseException
 	 */
 	@Deprecated
-	Collection<T> findByFilters(Criteria criteria, List<? extends ConditionEntry> filters, Integer page, Integer rows,
+	Collection<T> findByFilters(Criteria criteria, List<ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode, Set<ManagerFetchs> fetchs) throws BaseException;
 	
 	/**
@@ -140,7 +142,7 @@ public interface BaseEntityService<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	Collection<T> findByFilters(List<? extends ConditionEntry> filters, Integer page, Integer rows,
+	Collection<T> findByFilters(List<ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode, Set<ManagerFetchs> fetchs) throws BaseException;
 
 	/**
@@ -148,7 +150,7 @@ public interface BaseEntityService<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	Collection<T> findByFilters(List<? extends ConditionEntry> filters) throws BaseException;
+	Collection<T> findByFilters(List<ConditionEntry> filters) throws BaseException;
 	
 	/**
 	 * @param filters
@@ -156,7 +158,7 @@ public interface BaseEntityService<T extends BaseEntity> {
 	 * @return
 	 * @throws BaseException
 	 */
-	Collection<T> findByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs) throws BaseException;
+	Collection<T> findByFilters(List<ConditionEntry> filters, Set<ManagerFetchs> fetchs) throws BaseException;
 
 	/**
 	 * @return

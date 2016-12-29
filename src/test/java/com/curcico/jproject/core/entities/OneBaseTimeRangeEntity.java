@@ -8,13 +8,15 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 
 @Entity(name="TEST_VTR_ENTITY")
-public class OneVersionedTimeRangeEntity extends BaseTimeRangeEntity {
+public class OneBaseTimeRangeEntity extends BaseTimeRangeEntity {
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = -6770678021712829066L;
 
 	private String descripcion;
+	private String nombre;
 	
+
 	@Override
 	@Id
 	@GeneratedValue( strategy = GenerationType.TABLE, generator = "idGenerator" )
@@ -32,5 +34,13 @@ public class OneVersionedTimeRangeEntity extends BaseTimeRangeEntity {
 		this.descripcion = descripcion;
 	}
 
+	@Column(name = "NOMBRE", nullable=false, length=60)
+	public String getNombre() {
+		return nombre;
+	}
+	
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
 }

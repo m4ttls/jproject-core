@@ -61,13 +61,13 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 
 	@Override
 	@Transactional(readOnly = true)
-	public T loadEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException {
+	public T loadEntityByFilters(List<ConditionEntry> filters) throws BaseException {
 		return dao.loadEntityByFilters(filters);
 	}
 		
 	@Override
 	@Transactional(readOnly = true)
-	public T loadEntityByFilters(List<? extends ConditionEntry> filters,
+	public T loadEntityByFilters(List<ConditionEntry> filters,
 			Set<ManagerFetchs> fetchs) throws BaseException {
 			return dao.loadEntityByFilters(filters, fetchs);
 	}
@@ -147,7 +147,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public Collection<T> findByFilters(List<? extends ConditionEntry> filters, Integer page, Integer rows,
+	public Collection<T> findByFilters(List<ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode) throws BaseException {
 		Collection<T> resultados = null;
 			resultados = (Collection<T>) dao.findByFilters(filters, page, rows, orderBy, orderMode, null);
@@ -157,7 +157,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public Collection<T> findByFilters(List<? extends ConditionEntry> filters) throws BaseException {
+	public Collection<T> findByFilters(List<ConditionEntry> filters) throws BaseException {
 		Collection<T> resultados = null;
 			resultados = (Collection<T>) dao.findByFilters(filters);
 		return resultados;
@@ -165,7 +165,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Long getCountByFilters(List<? extends ConditionEntry> filters) throws BaseException {
+	public Long getCountByFilters(List<ConditionEntry> filters) throws BaseException {
 			return dao.countByFilters(filters);
 	}
 	
@@ -181,7 +181,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public Collection<T> findByFilters(Criteria criteria, List<? extends ConditionEntry> filters, Integer page, Integer rows,
+	public Collection<T> findByFilters(Criteria criteria, List<ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode,Set<ManagerFetchs> fetchs) throws BaseException {
 		Collection<T> resultados = null;
 		resultados = (Collection<T>) dao.findByFilters(criteria, filters, page, rows, orderBy, orderMode, fetchs);
@@ -190,7 +190,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public Collection<T> findByFilters(List<? extends ConditionEntry> filters, Integer page, Integer rows,
+	public Collection<T> findByFilters(List<ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode,Set<ManagerFetchs> fetchs) throws BaseException {
 		Collection<T> resultados = null;
 			resultados = (Collection<T>) dao.findByFilters(filters, page, rows, orderBy, orderMode, fetchs);
@@ -200,7 +200,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public Collection<T> findByFilters(List<? extends ConditionEntry> filters,
+	public Collection<T> findByFilters(List<ConditionEntry> filters,
 			Set<ManagerFetchs> fetchs) throws BaseException {
 		Collection<T> resultados = null;
 			resultados = (Collection<T>) dao.findByFilters(filters, fetchs);

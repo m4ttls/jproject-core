@@ -1,26 +1,35 @@
 package com.curcico.jproject.core.daos;
 
 import java.security.InvalidParameterException;
+import java.text.ParseException;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.curcico.jproject.core.daos.ConditionComplex.Operator;
+import com.curcico.jproject.core.entities.OneBaseTimeRangeEntity;
 import com.curcico.jproject.core.entities.TestEntity;
+import com.curcico.jproject.core.exception.ReflectionException;
+import com.curcico.jproject.core.services.OneBaseEntityService;
+import com.curcico.jproject.core.services.OneBaseTimeRangeEntityService;
 
 @ContextConfiguration(locations = {"classpath:spring/application-config.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ConditionEntryTest {
 	
-//	@Autowired
-//	OneVersionedTimeRangeEntityService vtrService;
-//	
-//	@Autowired
-//	OneVersionedEntityService veService;
+	@Autowired
+	OneBaseTimeRangeEntityService vtrService;
+	
+	@Autowired
+	OneBaseEntityService veService;
+
+	/*Condicion array vacio*/
+	String condicionArrayVacio 	= "[]";
 	
 	/*Condicion sin campo data requerido (nn=NOT NULL)*/
 	String filtroSimple01 		= "{'field':'id','op':'nn'}";
@@ -44,10 +53,13 @@ public class ConditionEntryTest {
 	String filtroSimpleConLista01 = "{'field':'id','op':'in','data':'[1, 2, 3]'}";
 	
 	/*Condicion con campo data requerido*/
-	String filtroSimpleConLista02 = "{'field':'nombre','op':'ni','data':'[\"marta\", \"luis\"]'}";	
+	String filtroSimpleConLista02 = "{'field':'nombre','op':'ni','data':'[\"marta\", \"luis\"]'}";
 	
+	/*Condicion con campo data invalido, mes 13*/
+	String filtroInvalidDate = "{'field':'fecha','op':'lt','data':'2016-13-01T00:00:00.000-0300'}";
 	
 	/* LLAMADAS ERRONEAS */
+	String error_condicionJsonVacio 						=  "{}";
 	String error_falta_campo_obligatorio 					=  "{'op':'eq','data':'1'}";
 	String error_falta_valor_para_operacion_que_lo_requiere =  "{'field':'id','op':'eq'}";
 	String error_valor_nulo_para_operacion_que_lo_requiere  =  "{'field':'id','op':'eq','data':''}";
@@ -68,6 +80,13 @@ public class ConditionEntryTest {
 	@Test
 	public void transformFilters_empty_ok() throws Exception{
 		List<ConditionEntry> c = ConditionEntry.transformFilters(TestEntity.class, "");
+		Assert.assertNotNull(c);
+		Assert.assertTrue(c.isEmpty());
+	}
+	
+	@Test
+	public void transformFilters_arrayVacio_ok() throws Exception{
+		List<ConditionEntry> c = ConditionEntry.transformFilters(TestEntity.class, condicionArrayVacio);
 		Assert.assertNotNull(c);
 		Assert.assertTrue(c.isEmpty());
 	}
@@ -133,57 +152,57 @@ public class ConditionEntryTest {
 	@Test
 	public void transformFilters_actives_ok() throws Exception{
 		//ACTIVAS
-		List<ConditionEntry> c = ConditionEntry.transformFilters(OneVersionedTimeRangeEntity.class, "{'field':'active','op':'eq','data':'true'}");
-		Collection<OneVersionedTimeRangeEntity> r = vtrService.findByFilters(c);
+		List<ConditionEntry> c = ConditionEntry.transformFilters(OneBaseEntityService.class, "{'field':'active','op':'eq','data':'true'}");
+		Collection<OneBaseEntityService> r = vtrService.findByFilters(c);
 		Assert.assertNotNull(r);
 		Assert.assertFalse(r.isEmpty());
-		c = ConditionEntry.transformFilters(OneVersionedTimeRangeEntity.class, "{'field':'active','op':'ne','data':'false'}");
+		c = ConditionEntry.transformFilters(OneBaseEntityService.class, "{'field':'active','op':'ne','data':'false'}");
 		r = vtrService.findByFilters(c);
 		Assert.assertNotNull(r);
 		Assert.assertFalse(r.isEmpty());
-		c = ConditionEntry.transformFilters(OneVersionedTimeRangeEntity.class, "{'field':'this','op':'on'}");
+		c = ConditionEntry.transformFilters(OneBaseEntityService.class, "{'field':'this','op':'on'}");
 		r = vtrService.findByFilters(c);
 		Assert.assertNotNull(r);
 		Assert.assertFalse(r.isEmpty());
 		
 		// NO ACTIVAS
-		c = ConditionEntry.transformFilters(OneVersionedTimeRangeEntity.class, "{'field':'active','op':'eq','data':'false'}");
+		c = ConditionEntry.transformFilters(OneBaseEntityService.class, "{'field':'active','op':'eq','data':'false'}");
 		r = vtrService.findByFilters(c);
 		Assert.assertNotNull(r);
 		Assert.assertTrue(r.isEmpty());
-		c = ConditionEntry.transformFilters(OneVersionedTimeRangeEntity.class, "{'field':'active','op':'ne','data':'true'}");
+		c = ConditionEntry.transformFilters(OneBaseEntityService.class, "{'field':'active','op':'ne','data':'true'}");
 		r = vtrService.findByFilters(c);
 		Assert.assertNotNull(r);
 		Assert.assertTrue(r.isEmpty());
-		c = ConditionEntry.transformFilters(OneVersionedTimeRangeEntity.class, "{'field':'this','op':'off'}");
+		c = ConditionEntry.transformFilters(OneBaseEntityService.class, "{'field':'this','op':'off'}");
 		r = vtrService.findByFilters(c);
 		Assert.assertNotNull(r);
 		Assert.assertTrue(r.isEmpty());
 		
 		// RELACIONES ACTIVAS
-		c = ConditionEntry.transformFilters(OneVersionedEntity.class, "{'field':'vtr.active','op':'eq','data':'true'}");
-		Collection<OneVersionedEntity> r2 = veService.findByFilters(c);
+		c = ConditionEntry.transformFilters(OneBaseEntity.class, "{'field':'vtr.active','op':'eq','data':'true'}");
+		Collection<OneBaseEntity> r2 = veService.findByFilters(c);
 		Assert.assertNotNull(r2);
 		Assert.assertFalse(r2.isEmpty());
-		c = ConditionEntry.transformFilters(OneVersionedEntity.class, "{'field':'vtr.active','op':'ne','data':'false'}");
+		c = ConditionEntry.transformFilters(OneBaseEntity.class, "{'field':'vtr.active','op':'ne','data':'false'}");
 		r2 = veService.findByFilters(c);
 		Assert.assertNotNull(r2);
 		Assert.assertFalse(r2.isEmpty());
-		c = ConditionEntry.transformFilters(OneVersionedEntity.class, "{'field':'vtr','op':'on'}");
+		c = ConditionEntry.transformFilters(OneBaseEntity.class, "{'field':'vtr','op':'on'}");
 		r2 = veService.findByFilters(c);
 		Assert.assertNotNull(r2);
 		Assert.assertFalse(r2.isEmpty());
 		
 		// RELACIONES NO ACTIVAS
-		c = ConditionEntry.transformFilters(OneVersionedEntity.class, "{'field':'vtr.active','op':'eq','data':'false'}");
+		c = ConditionEntry.transformFilters(OneBaseEntity.class, "{'field':'vtr.active','op':'eq','data':'false'}");
 		r2 = veService.findByFilters(c);
 		Assert.assertNotNull(r2);
 		Assert.assertTrue(r2.isEmpty());
-		c = ConditionEntry.transformFilters(OneVersionedEntity.class, "{'field':'vtr.active','op':'ne','data':'true'}");
+		c = ConditionEntry.transformFilters(OneBaseEntity.class, "{'field':'vtr.active','op':'ne','data':'true'}");
 		r2 = veService.findByFilters(c);
 		Assert.assertNotNull(r2);
 		Assert.assertTrue(r2.isEmpty());
-		c = ConditionEntry.transformFilters(OneVersionedEntity.class, "{'field':'vtr','op':'off'}");
+		c = ConditionEntry.transformFilters(OneBaseEntity.class, "{'field':'vtr','op':'off'}");
 		r2 = veService.findByFilters(c);
 		Assert.assertNotNull(r2);
 		Assert.assertTrue(r2.isEmpty());
@@ -192,6 +211,10 @@ public class ConditionEntryTest {
 	 */
 	
 	
+	@Test(expected=Exception.class)
+	public void transformFilters_jsonvacio_ok() throws Exception{
+		List<ConditionEntry> c = ConditionEntry.transformFilters(TestEntity.class, error_condicionJsonVacio);
+	}
 	
 	@Test(expected=Exception.class)
 	public void transformFilters_operator_need_value_expetion_01() throws Exception{
@@ -488,6 +511,30 @@ public class ConditionEntryTest {
 		Assert.assertFalse(ConditionEntry.isDate("25102004"));
 	}
 	
+    @Test(expected=ReflectionException.class)
+    public void dateFilter() throws Exception{
+        // 03-10-2016. Motivado por recibir java.text.ParseException probándolo desde el navegador
+        String date = "2016-01-01T00:00:00.000-0300";                      
+        ConditionEntry c = ConditionEntry.getConditionSimple(TestEntity.class, "fecha", SearchOption.LESS, date);
+        Assert.assertNotNull(c);
+        c = ConditionEntry.getConditionSimple(TestEntity.class, "fecha", SearchOption.LESS, "2016");
+    }
+
+    @Test(expected=ReflectionException.class)
+	public void validateDate() throws Exception {
+		ConditionEntry.transformFilters(TestEntity.class, filtroInvalidDate);
+		Assert.assertEquals("No se validó la fecha", 0, 1);
+	}
+
+	@Test
+	public void containsExpressionsTest() throws Exception{
+		OneBaseTimeRangeEntity o = new OneBaseTimeRangeEntity();
+		o.setNombre("_XXX_Entidad_Prueba_XXX");
+		vtrService.saveOrUpdate(o);
+		List<ConditionEntry> c = ConditionEntry.transformFilters(OneBaseTimeRangeEntity.class, "{'field':'nombre','op':'cn','data':'Entidad_Prueba'}");
+		OneBaseTimeRangeEntity r = vtrService.loadEntityByFilters(c);
+		Assert.assertNotNull(r);	
+	}
 	
 	
 }

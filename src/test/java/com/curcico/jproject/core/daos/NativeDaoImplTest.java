@@ -7,10 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,11 +22,9 @@ import com.google.gson.JsonArray;
 
 @ContextConfiguration(locations = {"classpath:spring/application-config.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class NativeDaoImplTest {
-	
-	@Autowired
-	private NativeDaoImpl dao;
-	
+@Transactional
+public class NativeDaoImplTest extends NativeDaoImpl{
+		
 	private static final String queryTest_01 = "SELECT * from ("
 															+ "SELECT SYSDATE as fecha, "
 															+ "10333 as entero, "
@@ -50,7 +49,7 @@ public class NativeDaoImplTest {
 	public void test_countByFilters_01() throws BaseException {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("arg_valor", new Integer(1));
-		Long filas = dao.countByFilters("SELECT SYSDATE, 1 as NUMERO, 'ALGO' as TEXTO FROM DUAL WHERE 1=:arg_valor",
+		Long filas = countByFilters("SELECT SYSDATE, 1 as NUMERO, 'ALGO' as TEXTO FROM DUAL WHERE 1=:arg_valor",
 				parameters, null);
 		Assert.assertTrue(filas.equals(1L));
 	}
@@ -59,7 +58,7 @@ public class NativeDaoImplTest {
 	public void test_countByFilters_02() throws BaseException {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("arg_valor", new Integer(0));
-		Long filas = dao.countByFilters("SELECT SYSDATE, 1 as NUMERO, 'ALGO' as TEXTO FROM DUAL WHERE 1=:arg_valor",
+		Long filas = countByFilters("SELECT SYSDATE, 1 as NUMERO, 'ALGO' as TEXTO FROM DUAL WHERE 1=:arg_valor",
 				parameters, null);
 		Assert.assertTrue(filas.equals(0L));
 	}
@@ -70,7 +69,7 @@ public class NativeDaoImplTest {
 		parameters.put("arg_valor", new Integer(1));
 		List<ConditionEntry> conditions = new ArrayList<ConditionEntry>();
 		conditions.add(new ConditionSimple("numero", SearchOption.EQUAL, new Integer(1)));
-		Long filas = dao.countByFilters("select * from (SELECT SYSDATE, 1 as NUMERO, 'ALGO' as TEXTO FROM DUAL) WHERE 1=:arg_valor",
+		Long filas = countByFilters("select * from (SELECT SYSDATE, 1 as NUMERO, 'ALGO' as TEXTO FROM DUAL) WHERE 1=:arg_valor",
 				parameters, conditions);
 		Assert.assertTrue(filas.equals(1L));
 	}
@@ -88,7 +87,7 @@ public class NativeDaoImplTest {
 			complex.addCondition(new ConditionSimple("moneda", SearchOption.GREATER, new Float(9.50)));
 			complex.addCondition(new ConditionSimple("moneda", SearchOption.LESS, new Float(11.50)));
 		conditions.add(complex); 
-		Long filas = dao.countByFilters(queryTest_01 + " AND 1=:arg_valor",
+		Long filas = countByFilters(queryTest_01 + " AND 1=:arg_valor",
 				parameters, conditions);
 		Assert.assertTrue(filas.equals(1L));
 	}
@@ -97,7 +96,7 @@ public class NativeDaoImplTest {
 	public void test_countByFilters_05() throws BaseException {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("arg_valor", new Integer(1));
-		Long filas = dao.countByFilters(queryTest_01 + " AND 1=:arg_valor", 
+		Long filas = countByFilters(queryTest_01 + " AND 1=:arg_valor", 
 				parameters, null);
 		Assert.assertTrue(filas!=0);
 	}
@@ -115,14 +114,14 @@ public class NativeDaoImplTest {
 			complex.addCondition(new ConditionSimple("moneda", SearchOption.GREATER, new Float(9.50)));
 			complex.addCondition(new ConditionSimple("moneda", SearchOption.LESS, new Float(11.50)));
 		conditions.add(complex); 
-		JsonArray filas = (JsonArray) dao.findByFilters(queryTest_01 + " AND 1=:arg_valor", 
+		JsonArray filas = (JsonArray) findByFilters(queryTest_01 + " AND 1=:arg_valor", 
 				parameters, conditions, 1, 10, "entero", "DESC", JsonArray.class);
 		Assert.assertFalse(filas.isJsonNull());
 	}
 	
 	@Test
 	public void test_findByFilters_02() throws BaseException {
-		JsonArray filas = (JsonArray) dao.findByFilters(queryTest_01, 
+		JsonArray filas = (JsonArray) findByFilters(queryTest_01, 
 				null, null, 1, 10, "texto", "DESC",JsonArray.class);
 		Assert.assertFalse(filas.isJsonNull());
 		Assert.assertTrue(filas.size()==1);
@@ -132,7 +131,7 @@ public class NativeDaoImplTest {
 	public void test_findByFilters_03() throws BaseException {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("arg_valor", new Integer(1));
-		JsonArray filas = (JsonArray) dao.findByFilters(queryTest_01 + " AND 1=:arg_valor", 
+		JsonArray filas = (JsonArray) findByFilters(queryTest_01 + " AND 1=:arg_valor", 
 				parameters, null, 1, 10, "texto", "DESC", JsonArray.class);
 		Assert.assertFalse(filas.isJsonNull());
 	}
@@ -142,7 +141,7 @@ public class NativeDaoImplTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("arg_valor", new Integer(1));
 		@SuppressWarnings("unchecked")
-		Collection<HashMap<String, Object>> filas = (Collection<HashMap<String, Object>>) dao.findByFilters(queryTest_01 + " AND 1=:arg_valor", 
+		Collection<HashMap<String, Object>> filas = (Collection<HashMap<String, Object>>) findByFilters(queryTest_01 + " AND 1=:arg_valor", 
 				parameters, null, 1, 10, "texto", "DESC", Collection.class);
 		Assert.assertFalse(filas.isEmpty());
 	}
@@ -152,7 +151,7 @@ public class NativeDaoImplTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("arg_valor", new Integer(1));
 		@SuppressWarnings("unchecked")
-		Collection<HashMap<String, Object>> filas = (Collection<HashMap<String, Object>>) dao.findByFilters(queryTest_01 + " AND 1=:arg_valor", 
+		Collection<HashMap<String, Object>> filas = (Collection<HashMap<String, Object>>) findByFilters(queryTest_01 + " AND 1=:arg_valor", 
 				parameters, null, null, null, "texto", null, Collection.class);
 		Assert.assertFalse(filas.isEmpty());
 		Assert.assertTrue(filas.size()==1);
@@ -163,7 +162,7 @@ public class NativeDaoImplTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("arg_valor", new Integer(1));
 		@SuppressWarnings("unchecked")
-		GridWrapper<Object> filas = (GridWrapper<Object>) dao.findByFilters(queryTest_01 + " AND 1=:arg_valor", 
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_01 + " AND 1=:arg_valor", 
 				parameters, null, 1, 10, "texto", null, GridWrapper.class);
 		Assert.assertFalse(filas.getRows().isEmpty());
 		Assert.assertTrue(filas.getRecords()>0);
@@ -173,7 +172,7 @@ public class NativeDaoImplTest {
 	public void test_findByFilters_10() throws Exception {
 		String filter = "{'field':'fecha','op':'ge','data':'2006-12-11T14:16:56Z'}";
 		@SuppressWarnings("unchecked")
-		GridWrapper<Object> filas = (GridWrapper<Object>) dao.findByFilters(queryTest_03, 
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_03, 
 				null, ConditionEntry.transformNativeFilters(filter), 1, 10, "texto", null, GridWrapper.class);
 		Assert.assertFalse(filas.getRows().isEmpty());
 		Assert.assertTrue(filas.getRecords()>0);
@@ -183,7 +182,7 @@ public class NativeDaoImplTest {
 	public void test_findByFilters_11() throws Exception {
 		String filter = "{'field':'fecha','op':'ge','data':'2006-12-11'}";
 		@SuppressWarnings("unchecked")
-		GridWrapper<Object> filas = (GridWrapper<Object>) dao.findByFilters(queryTest_03, 
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_03, 
 				null, ConditionEntry.transformNativeFilters(filter), 1, 10, "texto", null, GridWrapper.class);
 		Assert.assertFalse(filas.getRows().isEmpty());
 		Assert.assertTrue(filas.getRecords()>0);
@@ -193,7 +192,7 @@ public class NativeDaoImplTest {
 	public void test_findByFilters_12() throws Exception {
 		String filter = "{'field':'fecha','op':'ge','data':'2006-DIC-11'}";
 		@SuppressWarnings("unchecked")
-		GridWrapper<Object> filas = (GridWrapper<Object>) dao.findByFilters(queryTest_03, 
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_03, 
 				null, ConditionEntry.transformNativeFilters(filter), 1, 10, "texto", null, GridWrapper.class);
 		Assert.assertFalse(filas.getRows().isEmpty());
 		Assert.assertTrue(filas.getRecords()>0);
@@ -203,7 +202,7 @@ public class NativeDaoImplTest {
 	public void test_findByFilters_13() throws Exception {
 		String filter = "{'field':'texto','op':'ge','data':'2006-DIC-11'}";
 		@SuppressWarnings("unchecked")
-		GridWrapper<Object> filas = (GridWrapper<Object>) dao.findByFilters(queryTest_03, 
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_03, 
 				null, ConditionEntry.transformNativeFilters(filter), 1, 10, "texto", null, GridWrapper.class);
 		Assert.assertFalse(filas.getRows().isEmpty());
 		Assert.assertTrue(filas.getRecords()>0);
@@ -213,9 +212,64 @@ public class NativeDaoImplTest {
 	public void test_findByFilters_14() throws Exception {
 		String filter = "{'field':'texto','op':'bw','data':'AL'}";
 		@SuppressWarnings("unchecked")
-		GridWrapper<Object> filas = (GridWrapper<Object>) dao.findByFilters(queryTest_03, 
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_03, 
 				null, ConditionEntry.transformNativeFilters(filter), 1, 10, "texto", null, GridWrapper.class);
 		Assert.assertFalse(filas.getRows().isEmpty());
 		Assert.assertTrue(filas.getRecords()>0);
-	}	
+	}
+	
+	@Test
+	public void test_findByFilters_lk_01() throws Exception {
+		List<ConditionEntry> filters = new ArrayList<>();
+		filters.add(new ConditionSimple("texto", SearchOption.LIKE, "_L_o"));
+		@SuppressWarnings("unchecked")
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_03, 
+				null, filters, 1, 10, "texto", null, GridWrapper.class);
+		Assert.assertFalse(filas.getRows().isEmpty());
+		Assert.assertEquals(1L, filas.getRecords().longValue());
+	}
+	
+	@Test
+	public void test_findByFilters_lk_02() throws Exception {
+		List<ConditionEntry> filters = new ArrayList<>();
+		filters.add(new ConditionSimple("texto", SearchOption.LIKE, "%Lg_"));
+		@SuppressWarnings("unchecked")
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_03, 
+				null, filters, 1, 10, "texto", null, GridWrapper.class);
+		Assert.assertFalse(filas.getRows().isEmpty());
+		Assert.assertEquals(1L, filas.getRecords().longValue());
+	}
+	
+	@Test
+	public void test_findByFilters_lk_03() throws Exception {
+		List<ConditionEntry> filters = new ArrayList<>();
+		filters.add(new ConditionSimple("texto", SearchOption.LIKE, "_l%"));
+		@SuppressWarnings("unchecked")
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters(queryTest_03, 
+				null, filters, 1, 10, "texto", null, GridWrapper.class);
+		Assert.assertFalse(filas.getRows().isEmpty());
+		Assert.assertEquals(1L, filas.getRecords().longValue());
+	}
+	
+	@Test
+	public void test_findByFilters_lk_04() throws Exception {
+		List<ConditionEntry> filters = new ArrayList<>();
+		filters.add(new ConditionSimple("texto", SearchOption.LIKE, "Un!_Ejemplo"));
+		@SuppressWarnings("unchecked")
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters("SELECT 'Un_Ejemplo' as texto from dual", 
+				null, filters, 1, 10, "texto", null, GridWrapper.class);
+		Assert.assertFalse(filas.getRows().isEmpty());
+		Assert.assertEquals(1L, filas.getRecords().longValue());
+	}
+	
+	@Test
+	public void test_findByFilters_lk_05() throws Exception {
+		List<ConditionEntry> filters = new ArrayList<>();
+		filters.add(new ConditionSimple("texto", SearchOption.LIKE, "Un!_Ejemplo"));
+		@SuppressWarnings("unchecked")
+		GridWrapper<Object> filas = (GridWrapper<Object>) findByFilters("SELECT 'Un Ejemplo' as texto from dual", 
+				null, filters, 1, 10, "texto", null, GridWrapper.class);
+		Assert.assertTrue(filas.getRows().isEmpty());
+		Assert.assertEquals(0L, filas.getRecords().longValue());
+	}
 }

@@ -11,16 +11,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.RestrictionsWithWildcards;
 
 import com.curcico.jproject.core.exception.InternalErrorException;
 
 
 
 public class ConditionSimple extends ConditionEntry {
+
+	public static final Character ESCAPE_CHARACTER = '!';
+
 	private String column;
 	private SearchOption condition;
 	private Object value;
@@ -98,8 +103,7 @@ public class ConditionSimple extends ConditionEntry {
 
 	@Override
 	public String toString() {
-		return "ConditionEntry [column=" + column + ", condition=" + condition
-				+ ", value=" + value + "]";
+		return "ConditionEntry [column=" + column + ", condition=" + condition + ", value=" + value + "]";
 	}
 
 	@Override
@@ -170,23 +174,29 @@ public class ConditionSimple extends ConditionEntry {
 				criterion =(Restrictions.ne(field, value));
 				break;
 			case BEGIN:
-				criterion =(Restrictions.ilike(field, value.toString(),MatchMode.START));
+				criterion =(RestrictionsWithWildcards.ilike(field, escapeWildCardsLikeSearch(value.toString()),MatchMode.START, ESCAPE_CHARACTER ));
 				break;
 			case NOT_BEGIN:
-				criterion =(Restrictions.not(Restrictions.ilike(field, value.toString(), MatchMode.START)));
+				criterion =(Restrictions.not(RestrictionsWithWildcards.ilike(field, escapeWildCardsLikeSearch(value.toString()), MatchMode.START, ESCAPE_CHARACTER)));
 				break;
 			case END:
-				criterion =(Restrictions.ilike(field, value.toString(),MatchMode.END));
+				criterion =(RestrictionsWithWildcards.ilike(field, escapeWildCardsLikeSearch(value.toString()),MatchMode.END, ESCAPE_CHARACTER));
 				break;
 			case NOT_END:
-				criterion =(Restrictions.not(Restrictions.ilike(field, value.toString(), MatchMode.END)));
+				criterion =(Restrictions.not(RestrictionsWithWildcards.ilike(field, escapeWildCardsLikeSearch(value.toString()), MatchMode.END, ESCAPE_CHARACTER)));
 				break;
 			case CONTAIN:
-				criterion =(Restrictions.ilike(field, value.toString(), MatchMode.ANYWHERE));
+				criterion =(RestrictionsWithWildcards.ilike(field, escapeWildCardsLikeSearch(value.toString()), MatchMode.ANYWHERE, ESCAPE_CHARACTER));
 				break;
 			case NOT_CONTAIN:
-				criterion =(Restrictions.not(Restrictions.ilike(field, value.toString(), MatchMode.ANYWHERE)));
+				criterion =(Restrictions.not(RestrictionsWithWildcards.ilike(field, escapeWildCardsLikeSearch(value.toString()), MatchMode.ANYWHERE, ESCAPE_CHARACTER)));
 				break;
+			case LIKE:
+				criterion =(RestrictionsWithWildcards.ilike(field, value.toString(), MatchMode.EXACT, ESCAPE_CHARACTER));
+				break;				
+			case NOT_LIKE:
+				criterion =Restrictions.not((RestrictionsWithWildcards.ilike(field, value.toString(), MatchMode.EXACT, ESCAPE_CHARACTER)));
+				break;				
 			case NULL:
 				criterion =(Restrictions.isNull(field));
 				break;
@@ -196,14 +206,18 @@ public class ConditionSimple extends ConditionEntry {
 			case IN:
 				if(value instanceof Collection && !((Collection<Object>)value).isEmpty())
 					criterion =(Restrictions.in(field, (Collection<Object>) value));
-				else 
-					criterion = Restrictions.sqlRestriction("(1=0)");
+				else if(value.getClass().isArray() & !(ArrayUtils.isEmpty((Object[])value)))
+						criterion =(Restrictions.in(field, (Object[]) value));
+					 else
+						criterion = Restrictions.sqlRestriction("(1=0)");
 				break;
 			case NOT_IN:
 				if(value instanceof Collection && !((Collection<Object>)value).isEmpty())
 					criterion =(Restrictions.not(Restrictions.in(field, (Collection<Object>) value)));
-				else 
-					criterion = Restrictions.sqlRestriction("(1=1)");
+				else if(value.getClass().isArray() & !(ArrayUtils.isEmpty((Object[])value)))
+						 criterion =(Restrictions.not(Restrictions.in(field, (Object[]) value)));
+				 	 else
+				 		 criterion = Restrictions.sqlRestriction("(1=1)");
 				break;
 			case LESS:
 				criterion =(Restrictions.lt(field, value));
@@ -240,6 +254,18 @@ public class ConditionSimple extends ConditionEntry {
 			return criterion;
 		return null;
 	}
+	
+	/**
+	 * Escape de comodines propios de la busqueda por Like
+	 * @param value
+	 * @return
+	 */
+	public String escapeWildCardsLikeSearch(String value) {
+		value = value.replaceAll(ESCAPE_CHARACTER.toString(), ESCAPE_CHARACTER.toString()+ESCAPE_CHARACTER.toString());
+		value = value.replaceAll("%", ESCAPE_CHARACTER.toString() + "%");
+		value = value.replaceAll("_", ESCAPE_CHARACTER.toString() + "_");
+		return value;
+	}
 
 	
 	@Override
@@ -256,29 +282,37 @@ public class ConditionSimple extends ConditionEntry {
 				restriction = this.getColumn() + "<>:" + parameterName ;
 				break;
 			case BEGIN:
-				restriction = this.getColumn() + " like :" + parameterName ;
-				auxiliarValue = this.value + "%";
+				restriction = "LOWER(" + this.getColumn() + ") like LOWER(:" + parameterName + ") ESCAPE '" + ESCAPE_CHARACTER + "' " ;
+				auxiliarValue = escapeWildCardsLikeSearch(this.value.toString()) + "%";
 				break;
 			case NOT_BEGIN:
-				restriction = "NOT " + this.getColumn() + " like :" + parameterName ;
-				auxiliarValue = this.value + "%";
+				restriction = "NOT LOWER(" + this.getColumn() + ") like LOWER(:" + parameterName + ") ESCAPE '" + ESCAPE_CHARACTER + "' " ;
+				auxiliarValue = escapeWildCardsLikeSearch(this.value.toString()) + "%";
 				break;
 			case END:
-				restriction = this.getColumn() + " like :" + parameterName ;
-				auxiliarValue = "%" + this.value;
+				restriction = "LOWER(" + this.getColumn() + ") like LOWER(:" + parameterName + ") ESCAPE '" + ESCAPE_CHARACTER + "' " ;
+				auxiliarValue = "%" + escapeWildCardsLikeSearch(this.value.toString());
 				break;
 			case NOT_END:
-				restriction = "NOT " + this.getColumn() + " like :" + parameterName ;
-				auxiliarValue = "%" + this.value;
+				restriction = "NOT LOWER(" + this.getColumn() + ") like LOWER(:" + parameterName + ") ESCAPE '" + ESCAPE_CHARACTER + "' " ;
+				auxiliarValue = "%" + escapeWildCardsLikeSearch(this.value.toString());
 				break;
 			case CONTAIN:
-				restriction = this.getColumn() + " like :" + parameterName ;
-				auxiliarValue = "%" + this.value + "%";
+				restriction = "LOWER(" + this.getColumn() + ") like LOWER(:" + parameterName + ") ESCAPE '" + ESCAPE_CHARACTER + "' " ;
+				auxiliarValue = "%" + escapeWildCardsLikeSearch(this.value.toString()) + "%";
 				break;
 			case NOT_CONTAIN:
-				restriction = "NOT " + this.getColumn() + " like :" + parameterName ;
-				auxiliarValue = "%" + this.value + "%";
+				restriction = "NOT LOWER(" + this.getColumn() + ") like LOWER(:" + parameterName + ") ESCAPE '" + ESCAPE_CHARACTER + "' " ;
+				auxiliarValue = "%" + escapeWildCardsLikeSearch(this.value.toString()) + "%";
 				break;
+			case LIKE:
+				restriction = "LOWER(" + this.getColumn() + ") like LOWER(:" + parameterName + ") ESCAPE '" + ESCAPE_CHARACTER + "' ";
+				auxiliarValue = this.value.toString();
+				break;				
+			case NOT_LIKE:
+				restriction = "LOWER(" + this.getColumn() + ") NOT LIKE LOWER(:" + parameterName + ") ESCAPE '" + ESCAPE_CHARACTER + "' ";
+				auxiliarValue = this.value.toString();
+				break;				
 			case NULL:
 				restriction = this.getColumn() + " is null";
 				break;
@@ -305,7 +339,7 @@ public class ConditionSimple extends ConditionEntry {
 				break;	
 			case REGEX:
 				// funciona para string, numeros, fechas y booleanos
-				restriction = "REGEXP_LIKE(" + this.getColumn() + ", :" + parameterName + ")" ;
+				restriction = "REGEXP_LIKE(" + this.getColumn() + ", :" + parameterName + ", 'i')" ;
 				break;
 			default:
 				break;

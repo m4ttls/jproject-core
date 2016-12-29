@@ -46,13 +46,13 @@ public abstract class BaseTimeRangeEntityDaoImpl<T extends BaseTimeRangeEntity>
 	
 
 	@Override
-	public T save(T object, Integer user) throws InternalErrorException {
+	public T save(T object, Integer user) throws BaseException {
 		object.setValidFrom(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 		return super.save(object, user);
 	}
 	
 	@Override
-	public T delete(T object, Integer user) throws InternalErrorException {
+	public T delete(T object, Integer user) throws BaseException {
 		/* Hago las validaciones por si me sobreescriben el delete con la anotación de hibernate */
 		if(object.getVersion()==null) throw new InternalErrorException("falta.parametro.version");
 		if(user==null) throw new InternalErrorException("falta.parametro.usuario");
