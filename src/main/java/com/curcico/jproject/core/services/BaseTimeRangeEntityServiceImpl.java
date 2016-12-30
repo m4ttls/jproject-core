@@ -9,7 +9,7 @@ import com.curcico.jproject.core.entities.BaseTimeRangeEntity;
 import com.curcico.jproject.core.exception.BaseException;
 
 public abstract class BaseTimeRangeEntityServiceImpl<T extends BaseTimeRangeEntity, U extends BaseTimeRangeEntityDao<T>>
-		extends BaseEntityServiceImpl<T, U> 
+		extends BaseAuditedEntityServiceImpl<T, U> 
 		implements BaseTimeRangeEntityService<T> {
 	
 	@Override

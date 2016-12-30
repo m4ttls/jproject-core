@@ -9,10 +9,12 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.curcico.jproject.core.entities.OneBaseEntity;
+import com.curcico.jproject.core.entities.OneBaseTimeRangeEntity;
 import com.curcico.jproject.core.exception.ReflectionException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/application-config.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
 public class ReflectionUtilsTest {
 	
 	private static String allowedDateFormats[] = new String[]{"yyyy-MM-dd'T'HH:mm:ss.S'Z'", "dd/MM/yyyy", "dd-MM-yyyy"};
@@ -49,6 +51,15 @@ public class ReflectionUtilsTest {
 		unparsableDate = "2013-09-2918:46:19.5";
 		Assert.assertNull(ReflectionUtils.parseDateWithMultiFormat(unparsableDate, allowedDateFormats));
 	}
+	
+	@Test
+	public void getCast_ok(){
+		Class<?> c = ReflectionUtils.getCast(OneBaseEntity.class, "vtr");
+		Assert.assertTrue(c.isAssignableFrom(OneBaseTimeRangeEntity.class));
+	}
+	
+	
+	
 	
 	class SimpleDateContainer{
 		

@@ -6,7 +6,7 @@ import java.util.List;
 import com.curcico.jproject.core.entities.BaseTimeRangeEntity;
 import com.curcico.jproject.core.exception.BaseException;
 
-public interface BaseTimeRangeEntityDao<T extends BaseTimeRangeEntity> extends BaseAuditedEntityDao<T> {
+public interface BaseTimeRangeEntityDao<T extends BaseTimeRangeEntity> extends BaseEntityDaoR<T>, BaseAuditedEntityDaoCUD<T> {
 	
 	/** Retorna una lista de los filtros proporcionados mas los filtros de entidades activas.
 	 * No modifica la lista original.

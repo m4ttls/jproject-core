@@ -530,7 +530,8 @@ public class ConditionEntryTest {
 	public void containsExpressionsTest() throws Exception{
 		OneBaseTimeRangeEntity o = new OneBaseTimeRangeEntity();
 		o.setNombre("_XXX_Entidad_Prueba_XXX");
-		vtrService.saveOrUpdate(o);
+		o.setDescripcion("_XXX_Entidad_Prueba_XXX");
+		o = vtrService.saveOrUpdate(o, 1);
 		List<ConditionEntry> c = ConditionEntry.transformFilters(OneBaseTimeRangeEntity.class, "{'field':'nombre','op':'cn','data':'Entidad_Prueba'}");
 		OneBaseTimeRangeEntity r = vtrService.loadEntityByFilters(c);
 		Assert.assertNotNull(r);	

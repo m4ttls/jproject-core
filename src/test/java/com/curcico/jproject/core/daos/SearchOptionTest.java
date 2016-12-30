@@ -52,7 +52,8 @@ public class SearchOptionTest {
 	private synchronized OneBaseTimeRangeEntity createOneVersionedTimeRangeEntity(String nombre) throws BaseException{
 		OneBaseTimeRangeEntity vtre = new OneBaseTimeRangeEntity();
 		vtre.setNombre(nombre);
-		return service.saveOrUpdate(vtre);
+		vtre.setDescripcion(nombre);
+		return service.saveOrUpdate(vtre, 1);
 	}
 	
 	private synchronized OneBaseEntity createOneVersionedEntity(String nombre) throws BaseException{
@@ -129,7 +130,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionEquals_Number_ok2() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("searchOptionEquals");
-		filters.add(new ConditionSimple("id", SearchOption.EQUAL, -1000L));
+		filters.add(new ConditionSimple("id", SearchOption.EQUAL, -1000));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -201,7 +202,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionNotEquals_Number_ok1() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("searchOptionEquals");
-		filters.add(new ConditionSimple("id", SearchOption.NOT_EQUAL, -1000L));
+		filters.add(new ConditionSimple("id", SearchOption.NOT_EQUAL, -1000));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -429,7 +430,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionNull_02() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("vigenciaHasta", SearchOption.NULL, null));
+		filters.add(new ConditionSimple("validTo", SearchOption.NULL, null));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -451,7 +452,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionNotNull_02() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("vigenciaHasta", SearchOption.NOT_NULL, null));
+		filters.add(new ConditionSimple("validTo", SearchOption.NOT_NULL, null));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -559,7 +560,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionLess_Number_01() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.LESS, 2L));
+		filters.add(new ConditionSimple("version", SearchOption.LESS, 2));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -569,7 +570,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionLess_Number_02() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.LESS, 1L));
+		filters.add(new ConditionSimple("version", SearchOption.LESS, 1));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -624,7 +625,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionLessEquals_Number_01() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.LESS_EQUAL, 2L));
+		filters.add(new ConditionSimple("version", SearchOption.LESS_EQUAL, 2));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -634,7 +635,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionLessEquals_Number_02() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.LESS_EQUAL, 1L));
+		filters.add(new ConditionSimple("version", SearchOption.LESS_EQUAL, 1));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -644,7 +645,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionLessEquals_Number_03() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.LESS_EQUAL, 0L));
+		filters.add(new ConditionSimple("version", SearchOption.LESS_EQUAL, 0));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -721,7 +722,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionGreater_Number_01() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.GREATER, 0L));
+		filters.add(new ConditionSimple("version", SearchOption.GREATER, 0));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -731,7 +732,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionGreater_Number_02() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.GREATER, 1L));
+		filters.add(new ConditionSimple("version", SearchOption.GREATER, 1));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -786,7 +787,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionGreaterEquals_Number_01() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.GREATER_EQUAL, 0L));
+		filters.add(new ConditionSimple("version", SearchOption.GREATER_EQUAL, 0));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -796,7 +797,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionGreaterEquals_Number_02() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.GREATER_EQUAL, 1L));
+		filters.add(new ConditionSimple("version", SearchOption.GREATER_EQUAL, 1));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);
@@ -806,7 +807,7 @@ public class SearchOptionTest {
 	@Test
 	public void searchOptionGreaterEquals_Number_03() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("TEST&TEST");
-		filters.add(new ConditionSimple("version", SearchOption.GREATER_EQUAL, 2L));
+		filters.add(new ConditionSimple("version", SearchOption.GREATER_EQUAL, 2));
 		GridWrapper<?> resultado = 
 				service.findByFiltersGridWrapper(filters, 1, 5, null, null, null);
 		Assert.assertNotNull(resultado);

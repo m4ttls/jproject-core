@@ -18,7 +18,10 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.RestrictionsWithWildcards;
 
+import com.curcico.jproject.core.entities.BaseTimeRangeEntity;
+import com.curcico.jproject.core.entities.OneBaseEntity;
 import com.curcico.jproject.core.exception.InternalErrorException;
+import com.curcico.jproject.core.utils.ReflectionUtils;
 
 
 
@@ -154,6 +157,12 @@ public class ConditionSimple extends ConditionEntry {
 		}
 		switch (this.getCondition()) {
 			case EQUAL:{
+				Criterion r = getCriterionForActiveEntity(clase, field, true);
+				if(r!=null){
+					criterion = r;
+					break;
+				}
+				
 				if(java.util.Date.class.isInstance(value)){
 					Criterion fechaGe = Restrictions.ge(field, value);// tomamos la fecha inicial(la que se va a buscar)
 					Calendar value1 = Calendar.getInstance();
@@ -171,6 +180,11 @@ public class ConditionSimple extends ConditionEntry {
 				break;
 			}
 			case NOT_EQUAL:
+				Criterion r = getCriterionForActiveEntity(clase, field, false);
+				if(r!=null){
+					criterion = r;
+					break;
+				}
 				criterion =(Restrictions.ne(field, value));
 				break;
 			case BEGIN:
@@ -254,6 +268,32 @@ public class ConditionSimple extends ConditionEntry {
 			return criterion;
 		return null;
 	}
+	
+	private Criterion getCriterionForActiveEntity(Class<?> clase, String field, Boolean isEquals){
+		
+		if(field.endsWith("active") && Boolean.class.isAssignableFrom(value.getClass())){
+			String path = "";
+			if(field.contains(".")){
+				path = field.substring(0, field.lastIndexOf("."));
+				clase = ReflectionUtils.getCast(OneBaseEntity.class, path);				
+				path+=".";
+			}
+			if( (field.equals(path + "active") && BaseTimeRangeEntity.class.isAssignableFrom(clase) ) ){
+				Date now = new Date();
+				Criterion deleted 	= Restrictions.isNull(path + "deleted");
+				Criterion validFrom = Restrictions.le(path + "validFrom", now);
+				Criterion validTo 	= Restrictions.or(Restrictions.ge(path + "validTo", now), Restrictions.isNull(path + "validTo"));
+				Criterion vigencia  = Restrictions.and(validFrom, validTo);
+				if (isEquals)
+					return ( (Boolean)value)?Restrictions.and(deleted, vigencia):Restrictions.not(Restrictions.and(deleted, vigencia));
+				else	
+					return ( (Boolean)value)?Restrictions.not(Restrictions.and(deleted, vigencia)):Restrictions.and(deleted, vigencia);
+			}
+		}
+		return null;
+	}
+	
+	
 	
 	/**
 	 * Escape de comodines propios de la busqueda por Like

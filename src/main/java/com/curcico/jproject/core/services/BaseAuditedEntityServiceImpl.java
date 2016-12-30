@@ -2,13 +2,13 @@ package com.curcico.jproject.core.services;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.curcico.jproject.core.daos.BaseAuditedEntityDao;
+import com.curcico.jproject.core.daos.BaseAuditedEntityDaoCUD;
 import com.curcico.jproject.core.entities.BaseAuditedEntity;
 import com.curcico.jproject.core.exception.BaseException;
 import com.curcico.jproject.core.exception.BusinessException;
 import com.curcico.jproject.core.exception.InternalErrorException;
 
-public abstract class BaseAuditedEntityServiceImpl<T extends BaseAuditedEntity, U extends BaseAuditedEntityDao<T>>
+public abstract class BaseAuditedEntityServiceImpl<T extends BaseAuditedEntity, U extends BaseAuditedEntityDaoCUD<T>>
 		extends BaseEntityServiceImpl<T, U> 
 		implements BaseAuditedEntityService<T> {
 
@@ -55,25 +55,6 @@ public abstract class BaseAuditedEntityServiceImpl<T extends BaseAuditedEntity, 
 				return dao.delete(object, user);
 		}
 		throw new InternalErrorException("invalid.parameters");
-	}
-	
-	@Override
-	@Deprecated
-	@Transactional(rollbackFor=Exception.class)
-	public T createOrUpdate(T entity, Integer userId) throws BaseException {
-			if(entity != null && userId != null){
-				if(entityValidate(entity)){
-					if (entity.getId()==null || entity.getId().equals(0)){
-							dao.save(entity, userId);
-							return entity;
-					} else {
-						dao.update(entity, userId);
-						return entity;
-					}
-				}
-			}
-			logger.error("Some parameters (entity or userId) are invalid.");
-			throw new BusinessException("invalid.parameters");
 	}
 	
 }

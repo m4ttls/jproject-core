@@ -8,7 +8,7 @@ import com.curcico.jproject.core.entities.BaseTimeRangeEntity;
 import com.curcico.jproject.core.exception.BaseException;
 
 public interface BaseTimeRangeEntityService<T extends BaseTimeRangeEntity> 
-			extends BaseEntityService<T> {
+			extends BaseAuditedEntityService<T> {
 	
 	/** Retorna una lista de los filtros proporcionados mas los filtros de entidades activas.
 	 * No modifica la lista original.

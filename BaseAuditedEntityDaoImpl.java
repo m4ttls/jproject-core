@@ -9,7 +9,7 @@ import com.curcico.jproject.core.exception.InternalErrorException;
 
 public abstract class BaseAuditedEntityDaoImpl<T extends BaseAuditedEntity> 
 	extends BaseEntityDaoImpl<T>	
-	implements BaseAuditedEntityDao<T> {
+	implements BaseEntityDao<T>, BaseAuditedEntityDaoCUD<T> {
 
 	
     public BaseAuditedEntityDaoImpl() {

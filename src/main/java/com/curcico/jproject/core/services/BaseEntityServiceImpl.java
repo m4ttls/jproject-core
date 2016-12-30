@@ -26,7 +26,8 @@ import com.curcico.jproject.core.wrapper.GridWrapper;
 /**
  * Clase abstracta que implementa los métodos mas comunes de los servicios.
 */
-public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends BaseEntityDao<T>> implements BaseEntityService<T> {
+public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends BaseEntityDao<T>> 
+	implements BaseEntityService<T> {
 
 	protected  final Logger logger = Logger.getLogger(getClass());
 	
@@ -90,20 +91,13 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 			throw new BusinessException("invalid.parameters");
 	}
 	
-	@Override
-	@Deprecated
-	@Transactional(rollbackFor=Exception.class)
-	public T createOrUpdate(T entity, Integer userId) throws BaseException {
-			return this.saveOrUpdate(entity);
-	}
-
 	@Transactional
 	protected boolean entityValidate(T entity) throws BaseException {
 		return true;
 	}
 
 	@Transactional
-	protected void beforeSave(T entity,Integer userId) throws BaseException {
+	protected void beforeSave(T entity) throws BaseException {
 		return ;
 	}
 	
@@ -114,19 +108,6 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 		if(object==null) 
 			throw new InternalErrorException("invalid.parameters");
 		return dao.delete(object);
-	}
-	
-	@Override
-	@Deprecated
-	@Transactional(rollbackFor=Exception.class)
-	public T delete(T entity, Integer userId) throws BaseException{
-		if(entity!=null && entity.getId()!=null && userId!=null){
-			entity = loadEntityById(entity.getId());
-			dao.delete(entity);
-		} else {
-			throw new BusinessException("invalid.parameters");
-		}
-		return entity;
 	}
 	
 	@Override
