@@ -7,7 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.SQLDelete;
+
 @Entity(name="TEST_VTR_ENTITY")
+@SQLDelete(sql="update 	TEST_VTR_ENTITY set	deleted=1, VALID_TO=sysdate where id=? and VERSION=?" )
 public class OneBaseTimeRangeEntity extends BaseTimeRangeEntity {
 
 	@SuppressWarnings("unused")

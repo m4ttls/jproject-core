@@ -151,8 +151,8 @@ public class SearchOptionTest {
 	public void searchOptionEquals_Entity_active_ok_02() throws BaseException, InterruptedException{
 		OneBaseTimeRangeEntity vtre = createOneVersionedTimeRangeEntity("test");
 		Thread.sleep(10L);
+		vtre.setUpdatedByUser(-10);
 		vtre = service.delete(vtre);
-		/*NOTA, cuando la condicion active se */
 		Thread.sleep(1000L);
 		List<ConditionEntry> filters = new ArrayList<ConditionEntry>();
 		filters.add(new ConditionSimple("id", SearchOption.EQUAL, vtre.getId()));
