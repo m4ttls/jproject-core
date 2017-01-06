@@ -144,8 +144,8 @@ public class ReflectionUtils {
 				}
 			}
 		}
-		logger.debug("Respuesta: " + clase.getCanonicalName());
-		return clase;
+		logger.debug("NO ENCONTRADO: " + clase.getCanonicalName());
+		return null;
 	}
 	
 	/** Devuelve todos los campos del objeto (incluso los de las superclases)

@@ -18,8 +18,8 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.RestrictionsWithWildcards;
 
+import com.curcico.jproject.core.entities.BaseEntity;
 import com.curcico.jproject.core.entities.BaseTimeRangeEntity;
-import com.curcico.jproject.core.entities.OneBaseEntity;
 import com.curcico.jproject.core.exception.InternalErrorException;
 import com.curcico.jproject.core.utils.ReflectionUtils;
 
@@ -275,7 +275,7 @@ public class ConditionSimple extends ConditionEntry {
 			String path = "";
 			if(field.contains(".")){
 				path = field.substring(0, field.lastIndexOf("."));
-				clase = ReflectionUtils.getCast(OneBaseEntity.class, path);				
+				clase = ReflectionUtils.getCast(clase, path);				
 				path+=".";
 			}
 			if( (field.equals(path + "active") && BaseTimeRangeEntity.class.isAssignableFrom(clase) ) ){

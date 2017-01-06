@@ -880,7 +880,7 @@ public class SearchOptionTest {
 	}
 
 	
-	/* ***  SearchOption.REGEX  				*** */
+	/* ***  SearchOption.REGEX  				*** 
 	@Test
 	public void searchOptionRegex_01() throws BaseException {
 		List<ConditionEntry> filters = createEntityAndCondition("1234");
@@ -930,5 +930,5 @@ public class SearchOptionTest {
 		Assert.assertNotNull(resultado);
 		Assert.assertTrue(resultado.getRows().isEmpty());
 	}
-	
+	*/
 }
