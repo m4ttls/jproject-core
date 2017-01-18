@@ -43,31 +43,31 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public T loadEntityById(Integer id) throws BaseException{
 			return dao.loadEntityById(id);
 	}
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public T loadEntityById(Integer id, String[] attributesInitialized) throws BaseException{
 		return loadEntityById(id, ManagerFetchs.createdFetchs(attributesInitialized));
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public T loadEntityById(Integer id, Set<ManagerFetchs> fetchs)
 			throws BaseException {
 		return dao.loadEntityById(id, fetchs);
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public T loadEntityByFilters(List<? extends ConditionEntry> filters) throws BaseException {
 		return dao.loadEntityByFilters(filters);
 	}
 		
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public T loadEntityByFilters(List<? extends ConditionEntry> filters,
 			Set<ManagerFetchs> fetchs) throws BaseException {
 			return dao.loadEntityByFilters(filters, fetchs);
@@ -131,7 +131,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<Integer> getIds() throws BaseException{
 			return dao.getIds();	
 	}
@@ -147,7 +147,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
+	@Transactional
 	public Collection<T> findByFilters(List<? extends ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode) throws BaseException {
 		Collection<T> resultados = null;
@@ -157,7 +157,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
+	@Transactional
 	public Collection<T> findByFilters(List<? extends ConditionEntry> filters) throws BaseException {
 		Collection<T> resultados = null;
 			resultados = (Collection<T>) dao.findByFilters(filters);
@@ -165,13 +165,13 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Long getCountByFilters(List<? extends ConditionEntry> filters) throws BaseException {
 			return dao.countByFilters(filters);
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<T> findAll() throws BaseException {
 		List<T> results = null;
@@ -181,7 +181,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 
 	@Override
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
+	@Transactional
 	public Collection<T> findByFilters(Criteria criteria, List<? extends ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode,Set<ManagerFetchs> fetchs) throws BaseException {
 		Collection<T> resultados = null;
@@ -190,7 +190,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	}
 	@Override
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
+	@Transactional
 	public Collection<T> findByFilters(List<? extends ConditionEntry> filters, Integer page, Integer rows,
 			String orderBy, String orderMode,Set<ManagerFetchs> fetchs) throws BaseException {
 		Collection<T> resultados = null;
@@ -200,7 +200,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 
 	@Override
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
+	@Transactional
 	public Collection<T> findByFilters(List<? extends ConditionEntry> filters,
 			Set<ManagerFetchs> fetchs) throws BaseException {
 		Collection<T> resultados = null;
@@ -210,7 +210,7 @@ public abstract class BaseEntityServiceImpl<T extends BaseEntity, U extends Base
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
+	@Transactional
 	public GridWrapper<T> findByFiltersGridWrapper(List<ConditionEntry> filters, Integer page, Integer rows, String orderBy, String orderMode,
 			Set<ManagerFetchs> fetchs) throws BaseException{
 		return (GridWrapper<T>) dao.findByFiltersGridWrapper(filters, page, rows, orderBy, orderMode, fetchs);
