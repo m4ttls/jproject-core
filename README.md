@@ -12,8 +12,8 @@ Proporciona un marco de trabajo ordenado y prolijo para el código.
 
 Utiliza:
  - Java 1.7
- - Spring 4.0.5.RELEASE
- - Hibernate 4.3.5.Final
+ - Spring 4.3.2.RELEASE
+ - Hibernate 4.3.11.Final
  - Maven
  
  
