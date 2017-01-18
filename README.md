@@ -1,4 +1,4 @@
-# jproject-core
+# jproject-core (with SQLite Support)
 
 Funcionalidades genéricas para extender en aplicaciones java. 
 
@@ -18,4 +18,4 @@ Utiliza:
  
  
  
-[![](https://jitpack.io/v/acurci/jproject-core.svg)](https://jitpack.io/#acurci/jproject-core)
+[![](https://jitpack.io/v/m4ttls/jproject-core.svg)](https://jitpack.io/#m4ttls/jproject-core)
