@@ -260,14 +260,12 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
 	public T loadEntityByFilters(List<? extends ConditionEntry> filters)  throws InternalErrorException{
 		return loadEntityByFilters(filters, null);
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
 	public T loadEntityByFilters(List<? extends ConditionEntry> filters, Set<ManagerFetchs> fetchs)  throws InternalErrorException{			
 			Criteria criteria=this.sessionFactory.getCurrentSession().createCriteria(this.typeParameterClass);
 			Set<ManagerFetchs> fetchUnloaded = setFilters(criteria, filters, fetchs);
