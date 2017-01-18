@@ -35,7 +35,7 @@ public abstract class BaseTimeRangeEntity extends BaseAuditedEntity {
 	}
 	
 	@Transient
-	@ApiModelProperty(value="Marca de entidad activa", readOnly=true, required=false, position=990)
+	@ApiModelProperty(value="Marca de entidad activa", required=false, position=990)
 	public boolean isActive(){
 		Date now = new Date();
 		return validFrom!=null && validFrom.before(now) && (validTo==null || validTo.after(now));
