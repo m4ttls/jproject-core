@@ -38,6 +38,7 @@ public abstract class BaseEntityDaoImpl<T extends BaseEntity> implements BaseEnt
 	protected final Class<T> typeParameterClass;
 	
 	@Autowired
+	@Qualifier("sessionFactory")
 	protected SessionFactory sessionFactory;
 	
 	
