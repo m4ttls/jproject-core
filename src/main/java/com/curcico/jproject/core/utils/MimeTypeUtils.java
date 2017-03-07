@@ -30,7 +30,7 @@ public class MimeTypeUtils {
 		MIME_APPLICATION_OPENDOCUMENT_DATABASE("application/vnd.oasis.opendocument.database", "odb"),
 		MIME_APPLICATION_OPENDOCUMENT_IMAGE("application/vnd.oasis.opendocument.image", "odi"),
 		MIME_APPLICATION_POSTSCRIPT ("application/postscript", "eps"),
-		MIME_APPLICATION_PDF ("application/pdf", "pdf"),
+		MIME_APPLICATION_PDF ("application/pdf;base64,", "pdf"),
 		MIME_APPLICATION_JNLP ("application/jnlp", "jnlp"),
 		MIME_APPLICATION_MAC_BINHEX40 ("application/mac-binhex40", "hqx"),
 		MIME_APPLICATION_MAC_COMPACTPRO ("application/mac-compactpro", "cpt"),
