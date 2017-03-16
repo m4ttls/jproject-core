@@ -7,6 +7,7 @@ import java.nio.file.Files;
 public class MimeTypeUtils {
 
 	public enum MimeType{
+		MIME_APPLICATION_DWG ("application/acad", "dwg"),
 		MIME_APPLICATION_ANDREW_INSET ("application/andrew-inset", "ez"),
 		MIME_APPLICATION_JSON ("application/json", "json"),
 		MIME_APPLICATION_ZIP ("application/zip", "zip"),
